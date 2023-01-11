@@ -1,0 +1,44 @@
+{% extends "top/base.html" %}
+{% load crispy_forms_tags %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head %}
+    {% include 'top/head.html' %}
+{% endblock head %}
+
+{% block nav %}
+    {% include 'top/nav.html' %}
+{% endblock nav %}
+
+{% block content %}
+<div class="container p-5 text-center">
+    <div class="container mt-5 pt-5">
+        <form class="signup allauth_form" id="signup_form" method="post" action="{% url 'account_signup' %}">
+            {% csrf_token %}
+            <h6>アカウント登録</h6>
+            {% for field in form %}
+                <div class="my-3">
+                    {% if field.name == 'password1' %}
+                        <div class="text-muted font-07 mt-2 text-start ms-3">※8桁以上のパスワードを入力して下さい。</div>
+                    {% endif %}
+                    {{field}}
+                </div>
+            {% endfor %}
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            <p class="text-muted">アカウント作成をクリックすることで、<a href="/static/Polis-terms-of-service-221018.pdf" target="_blank" rel="noopener noreferrer">利用規約</a>、<a href="/static/Polis-cookie-policy-221018.pdf" target="_blank" rel="noopener noreferrer">Cookieポリシー</a>に同意するものとします。</p>
+            <button class="primaryAction btn rounded-0 top-login-button d-block py-2" type="submit">アカウント作成</button>
+            <div class="my-3">
+                <a class="link-none font-sm" href="{% url 'account_reset_password' %}">パスワードをお忘れですか？</a>
+            </div>
+            <hr class="my-1">
+            <div class="my-3">
+                <a class="link-none font-sm" href="/">すでにアカウントをお持ちの方はこちら</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base_def.html' %}
+
+{% block head %}
+    {% include 'head_def.html' %}
+    <title>参加中コミュニティ一覧</title>
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+{% endblock nav %}
+
+
+{% block content %}
+    <a class="fixed-button d-flex" href="{% url 'community:create'  %}" data-bs-toggle="modal" data-bs-target="#CommunityCreateModal"  data-bs-toggle="tooltip" data-bs-placement="top" title="コミュニティ作成">
+        <img class="ms-auto" src="/static/logo/community-plus.svg" alt="create community">
+    </a>
+    <!-- Modal -->
+    <div class="modal fade" id="CommunityCreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="margin-top:5% !important;">
+            <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="d-flex">
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <h6 class="modal-title text-center noto-bold my-3" id="exampleModalLabel">コミュニティ作成</h5>
+                <form action="{% url 'community:create' %}" method="POST">
+                    {% csrf_token %}
+                    <p class="my-1 text-start">コミュニティ名：<br>{{ CommunityCreateForm.community_name }}</p>
+                    <p class="my-1 text-start">詳細：<br>{{ CommunityCreateForm.description }}</p>
+                    <p class="my-1 text-start">カテゴリ：
+                                <select
+                                    type="{{CommunityCreateForm.category.field.widget.input_type}}"
+                                    class="form-select"
+                                    {% if CommunityCreateForm.category.field.required %}required{% endif %}
+                                    name="{{CommunityCreateForm.category.name}}"
+                                    id="{{CommunityCreateForm.category.id_for_label}}">
+                                        {% for item in CommunityCreateForm.category %}
+                                            {{item}}
+                                        {% endfor %}
+                                </select>
+                    </p>
+                    <button type="submit" class="btn btn-team text-light px-2 my-3">作成する</button>
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class='container px-3'>
+        <div class="shadow-min bg-white rounded pt-5 pb-5 px-5 my-3">
+            <span class="team-head-font noto-bold d-block mb-3 font-08">
+                <a class="link-none text-muted" href="{% url 'community:index' %}">
+                    <img src="/static/logo/arrow-left.svg" class="me-2" height="25px" width="25px" alt="">
+                    TOPへ
+                </a>
+            </span>
+            {% for community in joining_community %}
+                {% include 'components/communityview.html' %}
+                <!-- Modal -->
+                <div class="modal fade" id="CommunityExitModal{{community.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                        <div class="modal-body text-center">
+                            <div class="d-flex">
+                                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <h6 class="modal-title text-center noto-bold my-3 truncate" id="exampleModalLabel">
+                                {{community.community_name}}
+                            </h6>
+                                を参加コミュニティから削除することができます。 <br>
+                                削除しますか？
+                            <br>
+                            <a class="btn btn-danger mt-3" href="{% url 'community:exit' community.pk %}">削除</a>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+{% endblock content %}

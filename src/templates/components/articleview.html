@@ -1,0 +1,158 @@
+{% load myfilters %}
+
+{% comment %} {{a}} as article object (Post or TeamArticle) {% endcomment %}
+<div class="px-2" style="">
+            <div class="d-flex">
+                <a class="hover-none link-none d-flex mt-2" href="{{request.session.pre_page}}">
+                    <img src="/static/logo/back.svg" class="svg-def" height="15px" width="15px" alt="">
+                    <span class="rounded-end nav-teamchat-font ms-1 me-1">
+                        戻る
+                    </span>
+                </a>
+
+<!-- delete button -->
+{% if a.team %}
+    {% if request.user == a.team.leader %}
+    <button type="button" class="btn ms-auto mb-1" data-bs-toggle="dropdown" aria-expanded="false">
+        <img class="svg-def" src="/static/logo/post-menu.svg" alt="">
+    </button>
+    <ul class="dropdown-menu dropdown-menu-right" id="">
+        <li><button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#PostDeleteModal">投稿削除</button></li>
+    </ul>
+    <!-- Modal -->
+    <div class="modal fade" id="PostDeleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="margin-top:5% !important;">
+            <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="d-flex">
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <h6 class="modal-title text-center noto-bold my-3" id="exampleModalLabel">投稿を削除しますか？</h5>
+                <a href="{% url 'team:article_delete' a.pk %}" class="btn btn-danger text-light px-5 py-1 my-3">
+                    削除
+                </a>
+            </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% elif a.author %}
+    {% if a.author == request.user %}
+    <button type="button" class="btn ms-auto mb-1" data-bs-toggle="dropdown" aria-expanded="false">
+        <img class="svg-def" src="/static/logo/post-menu.svg" alt="">
+    </button>
+    <ul class="dropdown-menu dropdown-menu-right" id="">
+        <li><button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#PostDeleteModal">投稿削除</button></li>
+    </ul>
+    <!-- Modal -->
+    <div class="modal fade" id="PostDeleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="margin-top:5% !important;">
+            <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="d-flex">
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <h6 class="modal-title text-center noto-bold my-3" id="exampleModalLabel">投稿を削除しますか？</h5>
+                <a href="{% url 'post:delete' a.pk %}" class="btn btn-danger text-light px-5 py-1 my-3">
+                    削除
+                </a>
+            </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endif %}
+    </div>
+</div>
+
+<div class="px-5" style="min-height: 100vh;">
+        <span class="btn-category rounded d-inline-block py-0 px-2 mt-4"><span class="font-08">{% with a.category as c %} {{ category|getval:c }} {% endwith %}</span></span>
+            <div class="row">
+                <h3 class="noto-bold mb-5">{{ a.title }}</h3>
+                <div class="container-fluid">
+                    <div class="row g-1">
+                        <div class="col-sm-12 col-md-6">
+                            <img class="svg-seen pt-1" src="/static/logo/seen.svg" alt=""><span class="mx-2 text-muted middle-just">{{ a.seen }}</span>
+                            {% if a.team %}
+                                {% if not user.is_authenticated %}
+                                    <a class="link-none" href="{% url 'account_login' %}">
+                                        <img class="svg-seen" src="/static/logo/good.svg" alt="">
+                                {% else %}
+                                    {% if not request.user in good_users %}
+                                        <a class="link-none" href="{% url 'team:ta_good' a.pk %}">
+                                            <img class="svg-seen" src="/static/logo/good.svg" alt="">
+                                    {% else %}
+                                        <a class="link-none" href="{% url 'team:ta_ungood' a.pk %}">
+                                            <img class="svg-seen" src="/static/logo/has-good.svg" alt="">
+                                    {% endif %}
+                                {% endif %}
+                                    <span class="mx-2 text-muted middle-just">
+                                        {{ a.tagood_set.all|length }}
+                                    </span>
+                                </a>
+                            {% elif a.author %}
+                                {% if not user.is_authenticated %}
+                                    <a class="link-none" href="{% url 'account_login' %}">
+                                        <img class="svg-seen" src="/static/logo/good.svg" alt="">
+                                {% else %}
+                                    {% if not request.user in good_users %}
+                                        <a class="link-none" href="{% url 'post:good' a.pk %}">
+                                            <img class="svg-seen" src="/static/logo/good.svg" alt="">
+                                    {% else %}
+                                        <a class="link-none" href="{% url 'post:ungood' a.pk %}">
+                                            <img class="svg-seen" src="/static/logo/has-good.svg" alt="">
+                                    {% endif %}
+                                {% endif %}
+                                </a>
+                                <span class="mx-2 text-muted middle-just">
+                                    {{ a.postgood_set.all|length }}
+                                </span>
+                            {% endif %}
+                            <span class="ms-3 me-3 text-muted font-08 middle-just">投稿日：{{ a.updated_at|date:"Y/n/j H:i" }}</span>
+                        </div>
+
+                        <!-- autor or team who wrote this article -->
+                        {% if a.team %}
+                            {% with a.team as t %}
+                                <div class="col-sm-12 col-md-6 mt-2 rounded p-2 btn-outline-team">
+                                        <a class="link-none text-dark truncate d-block" href="{% url 'team:detail' t.pk %}">
+                                            <h6 class="d-inline">Team </h6><h3 class="d-inline noto-bold" data-bs-toggle="tooltip" data-bs-placement="top" title="{{t.team_name}}">{{ t.team_name }}</h3>
+                                        </a>
+                                        <span class="mt-auto font-team-grey">チーム紹介：</span>
+                                    <div>
+                                        {% if t.description %}
+                                            {{t.description}}
+                                        {% else %}
+                                            ..........
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endwith %}
+                        {% elif a.author %}
+                            {% with a.author as u %}
+                                <div class="col-sm-12 col-md-6 mt-2 p-2">
+                                    <a class="link-none text-dark d-flex" href="{% url 'users:detail' u.pk %}">
+                                        <img class="ms-auto icon-def" src="/media/{{ u.profile_image }}" alt="">
+                                        <div class="ms-3 overflow-hidden">
+                                            <h3 class="noto-bold truncate">{{ u.username }}</h3>
+                                            <p class="text-muted font-sm truncate">フォロワー：{{u.followed_by.all|length}}</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            {% endwith %}
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+            <hr>
+                <div class="container my-2" id="ArticleBody">
+                    {% if a.stock.first %}
+                        <div id="chart" class="mb-3"></div>
+                        {% include 'stock/stock_chart.html' %}
+                    {% endif %}
+                    {% autoescape off %}
+                        {{ a.content }}
+                    {% endautoescape %}
+                </div>
+</div>

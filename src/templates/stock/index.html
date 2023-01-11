@@ -1,0 +1,404 @@
+{% extends 'base_def.html' %}
+{% load myfilters %}
+{% load humanize %}
+
+{% block head %}
+    {% include 'head_def.html' %}
+    <style>
+        body{
+            background-color: #fff;
+        }
+    </style>
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+{% endblock nav %}
+
+{% block content %}
+    <div class="container-fluid bg-white pb-5">
+            <div class="px-5">
+                <ul class="nav nav-tabs border-none pt-4 px-5 mx-5 justify-content-around" id="nav-tab" role="tablist">
+                    <li class="nav-item">
+                        <a class="link-none hover-none pt-1 px-3 d-flex" href="{% url 'mypage:index' %}">
+                            <img src="/static/logo/back.svg" class="svg-def" alt="">
+                            <span class="rounded-end ms-1 me-1 color-top">
+                                戻る
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="{% if tab == 1 %}bg-stock{% endif %} nav-link py-1 px-3 rounded-half" href="{% url 'stock:index' %}?tab=1"><span class="color-top">資産管理</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="{% if tab == 2 %}bg-stock{% endif %} nav-link py-1 px-3 rounded-half" href="{% url 'stock:index' %}?tab=2"><span class="color-top">保有銘柄</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="{% if tab == 3 %}bg-stock{% endif %} nav-link py-1 px-3 rounded-half" href="{% url 'stock:index' %}?tab=3"><span class="color-top">ウォッチリスト</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="{% if tab == 4 %}bg-stock{% endif %} nav-link py-1 px-3 rounded-half" href="{% url 'stock:index' %}?tab=4"><span class="color-top">取引履歴</span></a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="px-5">
+            <hr class="mt-1">
+                    {% if tab == 1 %}
+                    <div class="tab-pane" id="tabA" role="tabpanel" aria-labelledby="tab-1">
+                            <div class="row mx-5">
+                                <div class="col-md-12 col-lg-6 mt-3 px-3">
+                                    <span class="noto-bold text-muted font-sm">総資産</span>
+                                        <br>
+                                        <h3 class="d-inline noto-bold ms-5">{{total_asset|floatformat:0|intcomma}}</h3>
+                                        <h6 class="d-inline">JPY</h6>
+                                    </span>
+                                </div>
+                                <div class="col-md-12 col-lg-6">
+                                    <div id="chart">
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    {% endif %}
+
+                    {% if tab == 2 %}
+                    <div class="tab-pane" id="tabB" role="tabpanel" aria-labelledby="tab-1">
+                        {% for t in assetlist %}
+                            <div class="row mx-5 my-5">
+                                <div class="col-sm-12 col-md-6 col-lg-4 v-line">
+                                    <div class="">
+                                        <span class="btn-ticker px-2 py-0 mt-auto">
+                                            {{t.json.ticker}}
+                                        </span>
+                                        <span class="overflow-hidden mt-auto">
+                                            <h6 class="noto-bold truncate pt-2 pb-0">
+                                                {{t.json.name}}
+                                            </h6>
+                                        </span>
+                                    </div>
+                                    <div class="">
+                                        <span class="text-muted font-06">最終取引:</span>
+                                        <span class="text-muted font-08">
+                                            {{t.trade.trade_date|date:"Y/m/d"}}
+                                        </span>
+                                        <span class="text-muted font-06 ms-2">構成比率:</span>
+                                        <span class="font-sm">
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex justify-content-between pt-3">
+                                        <div class="px-2 text-center">
+                                            <div>
+                                                <span class="text-muted font-07 me-3">保有額</span>
+                                                <h6 class="d-inline">
+                                                    {{t.total|floatformat:0|intcomma:3}}
+                                                    <span class="middle-just font-07">JPY</span>
+                                                </h6>
+                                            </div>
+                                            <span class="text-muted font-06 me-3" style="font-weight:100 !important">株価</span>
+                                                {% if t.currency == 'JPY' %}
+                                                    {{t.price_today|floatformat:0|intcomma:3}}
+                                                {% else %}
+                                                    {{t.price_today|floatformat:2|intcomma:3}}
+                                                {% endif %}
+                                                <span class="middle-just font-07" style="font-weight:100 !important">{{t.currency}}</span>
+                                        </div>
+                                        <div class="px-2">
+                                            <span class="text-muted font-07 me-3">1日の値動き</span>
+                                            <h6 id="plus-minus" class="d-inline">
+                                                {{t.json.pfluc|floatformat:2|intcomma:3}} %
+                                            </h6>
+                                            <br>
+                                            <span class="d-flex">
+                                                {% if t.json.pfluc < 0 %}
+                                                    <img class="ms-auto mt-2 me-1" src="/static/logo/price-minus.svg" height="14px" width="10px" alt="">
+                                                {% else %}
+                                                    <img class="ms-auto mt-2 me-1" src="/static/logo/price-plus.svg" height="14px" width="10px" alt="">
+                                                {% endif %}
+                                                <span id="plus-minus" class="font-sm me-1" style="font-weight:100 !important">
+                                                    {{t.json.fluc|floatformat:2|intcomma:3}}
+                                                </span>
+                                                <span class="middle-just font-07 mt-auto middle-just" style="font-weight:100 !important">{{t.currency}}</span>
+                                            </span>
+                                        </div>
+                                        <div class="px-2">
+                                            <span class="text-muted font-07 me-3">損益</span>
+                                            <h6 id="plus-minus" class="d-inline">
+                                                {{t.profit_percent|floatformat:2|intcomma:3}} %
+                                            </h6>
+                                            <br>
+                                            <div class="d-flex">
+                                                {% if t.profit < 0 %}
+                                                    <img class="ms-auto mt-2 me-1" src="/static/logo/price-minus.svg" height="14px" width="10px" alt="">
+                                                {% else %}
+                                                    <img class="ms-auto mt-2 me-1" src="/static/logo/price-plus.svg" height="14px" width="10px" alt="">
+                                                {% endif %}
+                                                <span id="plus-minus" class="font-sm me-1" style="font-weight:100 !important">
+                                                    {{t.profit|floatformat:0|intcomma:3}}
+                                                </span>
+                                                <span class="middle-just font-07 mt-auto" style="font-weight:100 !important"> JPY</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div class="col">
+                            </div>
+                        {% endfor %}
+                    </div>
+                        <a class="fixed-button d-flex" style="bottom:180px" href="#" data-bs-toggle="modal" data-bs-target="#BuyModal">
+                            <img class="ms-auto" src="/static/logo/stock_plus_beta.svg" alt="add stock to watchlist">
+                        </a>
+                        <a class="fixed-button d-flex" style="bottom:100px" href="#" data-bs-toggle="modal" data-bs-target="#SellModal">
+                            <img class="ms-auto" src="/static/logo/stock_minus_beta.svg" alt="add stock to watchlist">
+                        </a>
+                            <!-- Modal -->
+                            <div class="modal fade" id="BuyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                    <div class="modal-body">
+                                        <div class="d-flex">
+                                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <h6 class="modal-title text-center noto-bold my-3" id="exampleModalLabel">銘柄購入</h6>
+                                        <form action="{% url 'stock:trade' %}?sell=0" method="POST">
+                                            {% csrf_token %}
+                                            <span class="text-muted font-p7 mt-2">購入銘柄選択</span>
+                                            <div class="mb-2">
+                                                {{TradeForm.stock_name}}
+                                            </div>
+                                            <span class="text-muted font-p7 mt-2">購入価格</span>
+                                            <div class="d-flex mb-2">
+                                                <input type="number" name="price" step="any" class="form-control d-inline-block" required="" id="id_price">
+                                                <span class="d-inline-block" style="width:auto;right:1rem;">
+                                                </span>
+                                            </div>
+                                            <span class="text-muted font-p7 mt-2">購入数量</span>
+                                            <div class="mb-2">
+                                                {{TradeForm.amount}}
+                                            </div>
+                                            <span class="text-muted font-p7 mt-2">購入日</span>
+                                            <div class="mb-2">
+                                                {{TradeForm.trade_date}}
+                                            </div>
+                                            <div class="text-center">
+                                                <button type="submit" class="btn btn-team text-light px-5 my-3">購入する</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="SellModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                    <div class="modal-body">
+                                        <div class="d-flex">
+                                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <h6 class="modal-title text-center noto-bold my-3" id="exampleModalLabel">銘柄売却</h6>
+                                        <form action="{% url 'stock:trade' %}?sell=0" method="POST">
+                                            {% csrf_token %}
+                                            <span class="text-muted font-p7 mt-2">購入銘柄選択</span>
+                                            <div class="mb-2">
+                                                {{TradeForm.stock_name}}
+                                            </div>
+                                            <span class="text-muted font-p7 mt-2">購入価格</span>
+                                            <div class="d-flex mb-2">
+                                                <input type="number" name="price" step="any" class="form-control d-inline-block" required="" id="id_price">
+                                                <select name="currency" class="form-select me-0 position-absolute d-inline-block" id="id_currency" style="width:auto;right:1rem;">
+                                                    {% for item in TradeForm.currency %}
+                                                        {{item}}
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <span class="text-muted font-p7 mt-2">購入数量</span>
+                                            <div class="mb-2">
+                                                {{TradeForm.amount}}
+                                            </div>
+                                            <span class="text-muted font-p7 mt-2">購入日</span>
+                                            <div class="mb-2">
+                                                {{TradeForm.trade_date}}
+                                            </div>
+                                            <div class="text-center">
+                                                <button type="submit" class="btn btn-team text-light px-5 my-3">購入する</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    {% endif %}
+
+                    {% if tab == 3 %}
+                    <div class="tab-pane" id="tabC" role="tabpanel" aria-labelledby="tab-1">
+                        {% for s in watchlist %}
+                            <div class="row mx-5 my-5">
+                                <div class="col-sm-12 col-md-6 col-lg-4 v-line">
+                                    <div class="">
+                                        <span class="btn-ticker px-2 py-0 font-08">
+                                            {{ s.ticker }}
+                                        </span>
+                                        <span class="overflow-hidden">
+                                            <h6 class="noto-bold truncate mt-auto pt-2">
+                                                {{ s.name }}
+                                            </h6>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="px-2">
+                                            <span class="text-muted font-07">株価</span>
+                                            <h6 class="">
+                                                {% if s.currency == "JPY" %}
+                                                    {{s.close|last|floatformat:0|intcomma}}
+                                                {% else %}
+                                                    {{s.close|last|floatformat:2|intcomma}}
+                                                {% endif %}
+                                                <span class="middle-just font-07">{{s.currency}}</span>
+                                            </h6>
+                                        </div>
+                                        <div class="px-2">
+                                            <span class="text-muted font-07">変動比</span>
+                                            <h6 id="plus-minus" class="">
+                                                {{ s.pfluc|floatformat:2|intcomma }} %
+                                            </h6>
+                                        </div>
+                                        <div class="px-2">
+                                            <span class="text-muted font-07">変動幅</span>
+                                            <h6 id="plus-minus" class="" style="font-weight:100 !important">
+                                                {% if s.currency == "JPY" %}
+                                                    {{ s.fluc|floatformat:0|intcomma }}
+                                                {% else %}
+                                                    {{ s.fluc|floatformat:2|intcomma }}
+                                                {% endif %}
+                                                <span class="middle-just font-07" style="font-weight:100 !important">{{s.currency}}</span>
+                                            </h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <a class="fixed-button d-flex" style="bottom:180px" href="#" data-bs-toggle="modal" data-bs-target="#WlSearchModal">
+                            <img class="ms-auto" src="/static/logo/stock_plus_beta.svg" alt="add stock to watchlist">
+                        </a>
+                        <a class="fixed-button d-flex" style="bottom:100px" href="#" data-bs-toggle="modal" data-bs-target="#">
+                            <img class="ms-auto" src="/static/logo/stock_minus_beta.svg" alt="add stock to watchlist">
+                        </a>
+                            <!-- Modal -->
+                            <div class="modal fade" id="WlSearchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                    <div class="modal-body text-center">
+                                        <div class="d-flex">
+                                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <h6 class="modal-title text-center noto-bold my-3" id="exampleModalLabel">ウォッチリスト追加銘柄</h6>
+                                        <form action="{% url 'stock:add_wl' %}" method="POST">
+                                            {% csrf_token %}
+                                            {{WlSearchForm}}
+                                            <button type="submit" class="btn btn-team text-light px-2 my-3">追加する</button>
+                                        </form>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    {% endif %}
+
+
+                    {% if tab == 4 %}
+                    <div class="tab-pane" id="tabD" role="tabpanel" aria-labelledby="tab-1">
+                        {% for t in assetlist %}
+                            <div class="row mx-5 my-5">
+                                <div class="col-sm-12 col-md-6 col-lg-4 v-line">
+                                    <div class="">
+                                        <span class="btn-ticker px-2 py-0 mt-auto">
+                                            {{t.json.ticker}}
+                                        </span>
+                                        <span class="overflow-hidden mt-auto">
+                                            <h6 class="noto-bold truncate pt-2">
+                                                {{t.json.name}}
+                                            </h4>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="px-2">
+                                            <span class="text-muted font-07">取引日</span>
+                                            <h6 class="" style="font-weight:100 !important">
+                                                {{t.trade.created_at|date:"Y/m/j"}}
+                                            </h6>
+                                        </div>
+                                        <div class="px-2">
+                                            <span class="text-muted font-07">株価</span>
+                                            <h6 class="" style="font-weight:100 !important">
+                                                {% if s.currency == "JPY" %}
+                                                    {{t.trade.price|floatformat:0|intcomma}}
+                                                {% else %}
+                                                    {{t.trade.price|floatformat:2|intcomma}}
+                                                {% endif %}
+                                                <span class="middle-just font-07" style="font-weight:100 !important">{{t.currency}}</span>
+                                            </h6>
+                                        </div>
+                                        <div class="px-2">
+                                            <span class="text-muted font-07">数量</span>
+                                            <br>
+                                            <h6 class="d-inline" style="font-weight:100 !important">
+                                                {{t.trade.amount|intcomma}}
+                                            </h6>
+                                            <a class="ms-5" href="#" data-bs-toggle="modal" data-bs-target="#TradeDeleteModal{{t.trade.pk}}">
+                                                <img src="/static/logo/trash.svg" height="14px" width="14px" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal -->
+                            <div class="modal fade" id="TradeDeleteModal{{t.trade.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                    <div class="modal-body text-center">
+                                        <div class="d-flex">
+                                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <h6 class="modal-title text-center noto-bold my-3" id="exampleModalLabel">取引を削除しますか？</h6>
+                                        <div class="my-3">
+                                            <div class="">
+                                                <span class="btn-ticker px-2 py-0 mt-auto">
+                                                    {{t.json.ticker}}
+                                                </span>
+                                                <span class="overflow-hidden mt-auto">
+                                                    <h6 class="noto-bold truncate pt-2">
+                                                        {{t.json.name}}
+                                                    </h4>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <a href="{% url 'stock:delete_trade' t.trade.pk %}" class="btn btn-team text-light px-2 my-3">削除</a>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+
+{% block footer %}
+{% endblock footer %}
+
+
+{% block js %}
+    {% include 'stock/stock_chart.html' %}
+    {% include 'stock/stock_list.html' %}
+    <script src="/static/assets/js/plus-minus.js"></script>
+{% endblock %}
+

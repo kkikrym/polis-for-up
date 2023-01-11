@@ -1,0 +1,26 @@
+<div class="overflow-hidden col-auto article-card rounded-0 m-2 d-inline overflow-hidden">
+{% if a.is_published %}
+    {% if a.team %}<a class="link-none" href="{% url 'team:article_detail' a.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{a.title}}">
+    {% else %}<a class="link-none" href="{% url 'post:detail' a.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{a.title}}">
+    {% endif %}
+{% else %}
+    {% if a.team %}<a class="link-none" href="{% url 'team:article_update' a.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{a.title}}">
+    {% else %}<a class="link-none" href="{% url 'post:update' a.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{a.title}}">
+    {% endif %}
+{% endif %}
+    {% if not a.thumbnail %}<img class="img-fluid text-center article-thumbnail rounded-0" src="/static/thumb-other.png" alt="">
+    {% else %}<img class="img-fluid text-center article-thumbnail rounded-0" src="/media/{{a.thumbnail}}" alt="">{% endif %}
+    <h6 class="my-2 text-dark noto-bold break-all truncate">{{a.title}}</h5>
+</a>
+<div class="d-flex justify-content-between article-bottom">
+    <span class="tabfont font-07">{{a.created_at|date:"Y/n/j"}}</span>
+    <div class="truncate ms-2">
+        {% if a.team %}
+            <svg class="svg-team-article ms-auto mb-1" fill="#758CA6" viewBox="0 0 30 32" xmlns="http://www.w3.org/2000/svg"><path d="M0 34V0H17.15L18.1 4.3H30V22.8H17.2L16.25 18.55H3V34H0ZM19.75 19.8H27V7.3H15.55L14.6 3H3V15.55H18.8L19.75 19.8Z" /></svg>
+            <span class="ms-1 font-author font-08 truncate">Team {{a.team.team_name}}</span>
+        {% else %}
+            <span class="ms-1 font-author font-07 truncate">{{a.author.username}}</span>
+        {% endif %}
+    </div>
+</div>
+</div>

@@ -1,0 +1,43 @@
+{% extends 'base_def.html' %}
+
+{% block head %}
+    {% include 'head_def.html' %}
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+{% endblock nav %}
+
+{% block content %}
+    <div class="container mt-3">
+        {% for post in post_list %}
+            <div class="card mb-3">
+                <div class="card-header text-center">
+                    <div class="">
+                        <h3><a class="link-dark" href="{% url 'post:detail' post.id %}">{{ post.title }}</a></h3>
+                        {{ post.author_id }} <br>
+                        {{ post.updated_at }}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="col-lg-4"><img width="100px" height="100px" src="media/{{ post.image }}" alt="" />
+                        <div class=col>
+                            銘柄：{{ post.stock }} <br>
+                            タグ：{{ post.tag }} <br>
+
+                            {% autoescape off %}
+                                {{ post.content }} <br>
+                            {% endautoescape %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}
+
+
+{% block footer %}
+
+{% endblock footer %}

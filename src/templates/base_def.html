@@ -1,0 +1,102 @@
+{% load static %}
+{% load myfilters %}
+<!DOCTYPE html>
+<html lang="ja" prefix="og: http://ogp.me/ns#">
+<head>
+{% if request.META.HTTP_HOST == "polisjp.com" %}
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WVHTMM82NM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-WVHTMM82NM');
+</script>
+{% endif %}
+
+{% block head %}{% endblock %}
+</head>
+
+<body class="">
+{% if not reqest.user.is_anonymous %}
+<div class="modal fade" id="NotificationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="margin-top:5% !important;">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="d-flex">
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="p-3 my-3">
+                        <span class="team-head-font noto-bold d-block mt-2">リクルート</span>
+                            <div class="py-4" style="min-height:220px">
+                                {% for r in request.user.teamrecruit_set.all %}
+                                    <div class="shadow-min rounded p-3">
+                                        <a class="btn btn-team-view pt-0 pb-1 px-3 logo-team d-block truncate" href="{% url 'team:detail' r.team.pk %}">
+                                            <h6 class="text-light rounded mb-0 middle-just logo-team d-inline">Team {{r.team.team_name}}</h6>
+                                        </a>
+                                        <br>
+                                        <span class="text-muted">からリクルートがあります</span>
+                                        {% if request.user.team_set.first %}
+                                            <div class="d-flex">
+                                                <a class="btn btn-category link-none rounded px-3 py-2 ms-auto font-07" data-bs-dismiss="modal" aria-label="Close" data-bs-toggle="modal" data-bs-target="#AlreadyinteamModal">参加する</a>
+                                            </div>
+                                        {% else %}
+                                            <div class="d-flex">
+                                                <a class="btn btn-category link-none rounded px-3 py-2 ms-auto font-07" href="{% url 'team:accept_recruit' r.pk %}">参加する</a>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="modal fade" id="AlreadyinteamModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="margin-top:5% !important;">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="d-flex">
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="p-3 my-3">
+                        <h6>すでにチームに所属済みです。</h6>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+    {% block nav %}
+    {% endblock nav %}
+
+{% if '/create/' in request.path %}
+    <div style="padding-top:5vh">
+{% elif '/update/' in request.path %}
+    <div style="padding-top:5vh">
+{% elif '/mypage/' in request.path %}
+    <div class="content">
+{% elif '/community/' in request.path %}
+    <div class="content">
+{% elif '/info/' in request.path %}
+    <div class="content">
+{% else %}
+    <div class="content bg-white">
+{% endif %}
+        {% block content %}
+        {% endblock %}
+    </div>
+    {% block footer %}
+    {% endblock %}
+    <script src="/static/assets/js/jquery-3.6.1.slim.min.js"></script>
+    <script src="/static/assets/js/bootstrap.bundle.js"></script>
+    <script src="/static/assets/autocomplete/jquery-ui.js"></script>
+    <script src="/static/assets/js/vwchange.js"></script>
+    <!--script class="" src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script-->
+
+    {% block js %}
+    {% endblock %}
+</body>
+</html>

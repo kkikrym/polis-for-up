@@ -1,0 +1,85 @@
+version: '3'
+
+services:
+  python:
+    container_name: python
+    build:
+      context: .
+      dockerfile: ./python3/Dockerfile
+    working_dir: /src
+    command: bash -c "supervisord && uwsgi --socket :8001 --module vossite.wsgi:application --py-autoreload 1 --logto /var/log/wsgi/wsgi.log"
+    volumes:
+    - ./src/:/src/
+    - ./logs/wsgi/:/var/log/wsgi
+    - ./logs/supervisor/:/var/log/supervisor
+    - ./.vimrc:/root/.vimrc
+    # expose: is just for linked services, and ports: is for the host OS
+    expose:
+      - "8001"
+      - "8002"
+    environment:
+      PYTHONPATH: /src
+    env_file:
+      - ./src/.env
+    depends_on:
+      - mysql
+
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt/:/etc/letsencrypt/
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/uwsgi_params:/etc/nginx/uwsgi_params
+      - ./src/static/:/src/static/
+      - ./src/media/:/src/media/
+      - ./logs/nginx/:/var/log/nginx/
+    depends_on:
+      - python
+
+  redis:
+    container_name: redis
+    build:
+      context: .
+      dockerfile: ./redis/Dockerfile
+    ports:
+      - 6379:6379
+    restart: always
+    command: /usr/local/bin/redis-server /etc/redis/redis.conf
+
+  mysql:
+    container_name: mysql
+    build: ./mysql/
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'Root_p@ss_22726_cannot_known' #required
+      MYSQL_DATABASE: 'polisdb' #optional
+      MYSQL_USER: 'polisadmin' #optional
+      MYSQL_PASSWORD: 'P@ss_for_admin_005959' #optional
+      TZ: 'Asia/Tokyo'
+      # MYSQL_ALLOW_EMPTY_PASSWORD: "yes" #optional
+      # MYSQL_RANDOM_ROOT_PASSWORD: "yes" #optional
+      # MYSQL_ONETIME_PASSWORD: "yes" #optional (MySQL 5.6 or above)
+      # MYSQL_INITDB_SKIP_TZINFO: "" #optional
+    expose:
+      - "3306"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+        - ./mysql/data:/var/lib/mysql
+        - ./mysql/conf/conf.d:/etc/mysql/conf.d
+        #- ./logs/mysql/mysql/:/var/log/
+        #- ./logs/mysql/mysqld/:/var/run/mysqld/
+        - ./mysql/initdb.d:/docker-entrypoint-initdb.d
+    # To go inside this container:
+    # docker exec -it mysql mysql -u polisadmin -p
+    # P@ss_for_admin_005959
+
+
+
+volumes:
+  redis_data:

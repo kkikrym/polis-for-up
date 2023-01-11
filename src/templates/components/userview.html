@@ -1,0 +1,48 @@
+<div class="row rounded shadow-min pt-3 pb-1 px-3 my-4" style="min-height:100px">
+    <div class="col-md-12 col-lg-3 mt-1">
+        <div class="row">
+            <div class="col-auto">
+                    {% if request.user == team.leader %}
+                        {% if u != request.user %}
+                            {% if u in team.users.all %}
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#UserDeleteModal{{u.pk}}">
+                                    <img src="/static/logo/user-delete.svg" class="svg-def" height="8px" width="8px" alt="">
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                <div class="d-flex">
+                    <a class="" href="{% url 'users:detail' u.pk %}">
+                        <img class="icon-def" src="/media/{{u.profile_image}}" alt="">
+                    </a>
+                    <div class="ms-3 overflow-hidden {% if not u.team_set.first %}mt-3{% endif %}">
+                        {% if u.team_set.first %}
+                            <div class="d-flex">
+                                {% if u == u.team_set.first.leader %}
+                                    <img class="me-1" src="/static/logo/flag-red.svg" style="vertical-align: baseline;" alt="">
+                                {% endif %}
+                                <a class="link-none btn-team-grey text-light rounded px-1 truncate font-07 d-inline-block" href="{% url 'team:detail' u.team_set.first.pk %}">
+                                    Team {{ u.team_set.first.team_name }}
+                                </a>
+                            </div>
+                        {% endif %}
+                        <a href="{% url 'users:detail' u.pk %}" class="link-none text-dark">
+                            <h6 class="noto-bold truncate py-1">{{ u.username }}</h6>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 col-lg-9">
+        <div class="scroll-x">
+            <div class="pb-3 d-flex align-items-end" style="">
+                {% for a in u.post_set.all %}
+                    {% if a.is_published %}
+                        {% include 'components/showcase.html' %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

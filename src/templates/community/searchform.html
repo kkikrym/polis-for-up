@@ -1,0 +1,25 @@
+<form class="" name="queryform" method="get">
+    <div class="row px-2 text-center">
+        <div class="col d-flex font-08 pt-auto text-center">
+                <div class="bg-team-grey px-5 pt-3">
+                    <label class="font-team-grey noto-bold me-2" >絞り込み</label>
+                    <select class="form-select d-inline font-07 query-input py-1" name="order" id="select-order">
+                        <option class="" value="0" {% if request.GET.order == "0" %}selected{% endif %}>新規</option>
+                        <option class="" value="1" {% if request.GET.order == "1" %}selected{% endif %}>活況</option>
+                        <option class="" value="2" {% if request.GET.order == "2" %}selected{% endif %}>チャット数</option>
+                        <option class="" value="3" {% if request.GET.order == "3" %}selected{% endif %}>ユーザー数</option>
+                    </select>
+                </div>
+        </div>
+        <div class="col-lg-4 my-1 col-md-12 px-2 py-2">
+            <div class="input-group">
+                <input type="text" id="txt-search" name="search" class="form-control input-group-prepend font-08 query-input rounded-half" placeholder="検索" value="{{request.GET.search|default:''}}">
+                <svg class="svg-body position-absolute ms-3 mt-2" viewBox="0 0 36 37" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M33.8 36.95L20.65 23.7999C19.65 24.6666 18.4833 25.3416 17.15 25.825C15.8167 26.3083 14.4 26.5499 12.9 26.5499C9.3 26.5499 6.25 25.2999 3.75 22.7999C1.25 20.2999 0 17.2833 0 13.75C0 10.2166 1.25 7.19995 3.75 4.69995C6.25 2.19995 9.28333 0.949951 12.85 0.949951C16.3833 0.949951 19.3917 2.19995 21.875 4.69995C24.3583 7.19995 25.6 10.2166 25.6 13.75C25.6 15.1833 25.3667 16.5666 24.9 17.9C24.4333 19.2333 23.7333 20.4833 22.8 21.65L36 34.75L33.8 36.95ZM12.85 23.5499C15.55 23.5499 17.85 22.5916 19.75 20.6749C21.65 18.7583 22.6 16.45 22.6 13.75C22.6 11.05 21.65 8.74162 19.75 6.82495C17.85 4.90828 15.55 3.94995 12.85 3.94995C10.1167 3.94995 7.79167 4.90828 5.875 6.82495C3.95833 8.74162 3 11.05 3 13.75C3 16.45 3.95833 18.7583 5.875 20.6749C7.79167 22.5916 10.1167 23.5499 12.85 23.5499Z"/>
+                </svg>
+            </div>
+        </div>
+        <input type="text" class="d-none" name="tab" value="{{request.GET.tab}}">
+        <button type="submit" class="d-none" id="btn-submit"></button>
+    </div>
+</form>

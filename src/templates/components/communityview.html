@@ -1,0 +1,27 @@
+<div class="row justify-content-between px-5 mt-5">
+        <div class="col-auto">
+            <div class="d-flex">
+                {% if request.user in community.users.all %}
+                    <a class="nav-link p-0 link-dark me-3" href="#" data-bs-toggle="modal" data-bs-target="#CommunityExitModal{{community.pk}}">
+                        <img src="/static/logo/community-minus.svg" alt="">
+                    </a>
+                {% endif %}
+                    <a class="nav-link p-0 link-dark overflow-hidden" href="/community/chat/{{community.id}}">
+                        <h4 class="noto-bold truncate" data-bs-toggle="tooltip" data-bs-placement="top" title="{{community.community_name}}">{{ community.community_name }}</h4>
+                    </a>
+            </div>
+        </div>
+        <div class="col-auto ms-auto">
+            <span class="font-07 ms-2">
+                参加<span class="mx-2 intbox font-sm">{{community.users.all|length}}</span>人
+            </span>
+        </div>
+</div>
+<div class="mt-2 py-0 font-sm px-5 truncate">
+    詳細：{{community.description}}
+</div>
+<div class="py-0 d-flex justify-content-between px-5">
+    <span class="tabfont pb-0 text-bottom font-08">最終活動:<span class="ms-3">{{community.communitychat_set.all.last.created_at|date:"Y-m-d"}}</span></span>
+    <a class="btn ms-3 px-2 text-light bg-com mt-auto btn-tag" href="/community/chat/{{community.id}}">参加する</a>
+</div>
+<hr class="my-3">

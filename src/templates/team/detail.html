@@ -1,0 +1,111 @@
+{% extends 'base_def.html' %}
+
+{% block head %}
+    {% include 'head_def.html' %}
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+{% endblock nav %}
+
+{% block content %}
+<div class="container bg-white px-4">
+    <div class="mb-3 pt-3">
+        <div class="d-flex mb-3 justify-content-end me-md-5 me-sm-0">
+            {% if not request.user in team.followers.all %}
+                <a class="btn btn-follow mt-auto ms-md-3" href="{% if not user.is_authenticated %}{% url 'account_login' %}{% else %}{% url 'search:follow_team' team.pk %}{% endif %}">
+                    <img class="ms-auto" src="/static/logo/follow.svg" alt="">
+                    フォロー
+                </a>
+            {% else %}
+                <a class="btn btn-has-follow mt-auto ms-md-3" href="{% if not user.is_authenticated %}{% url 'account_login' %}{% else %}{% url 'search:unfollow_team' team.pk %}{% endif %}">
+                    フォロー中
+                </a>
+            {% endif %}
+            {% if not request.user.team_set.first %}
+                {% if team.users.all|length <= 9 %}
+                    {% if not team in user_requests %}
+                        <a class="btn btn-follow mt-auto ms-md-3" href="{% if not user.is_authenticated %}{% url 'account_login' %}{% else %}{% url 'team:request_create' team.id %}{% endif %}">
+                            <img class="ms-auto" src="/static/logo/follow.svg" alt="">
+                            参加申請
+                        </a>
+                    {% else %}
+                        <a class="btn btn-has-follow mt-auto ms-md-3" href="#">
+                            申請済み
+                        </a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="row g-0" style="">
+            <div class="col-md-9 col">
+                <div class="row g-0">
+                    <div class="col-auto">
+                        <h5 class="mt-auto d-inline-block mb-0 me-2 bottom-just">Team</h5><div class="truncate"><h2 class="mt-auto mb-0 d-inline noto-bold bottom-just">{{team.team_name}}</h2></div>
+                    </div>
+                    {% if team.description %}
+                        <div class="btn-outline-team rounded p-2 my-3 font-08">
+                            {% autoescape off %}{{team.description}}{% endautoescape %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-12">
+                <div class="row px-2 pt-md-2">
+                    <div class="text-center px-2 col col-md-12">
+                        <span class="text-muted font-07 me-2">フォロワー</span>
+                        <span class="noto-bold">{{team.followers.all|length}}</span>
+                        <span class="font-07">人</span>
+                    </div>
+                    <div class="text-center px-2 col">
+                        <span class="text-muted font-07 me-3">いいね</span>
+                        <span class="noto-bold">{{goods}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="mt-0">
+    </div>
+    <div class="container px-5 py-3 bg-white rounded shadow-min" style="min-height:220px">
+        <span class="team-head-font noto-bold d-block my-3 py-2">ユーザー</span>
+            <div class="scroll-x">
+                <div class="d-flex mx-3 py-3" style="">
+                    {% for u in team.users.all %}
+                        <div class="col-auto rounded mx-2 py-4 px-3 text-center request-card">
+                            <a href="{% url 'users:detail' u.user_id %}">
+                                <img class="mt-2 icon-def" src="/media/{{ u.profile_image }}" alt="">
+                            </a>
+                            <span class="truncate font-sm mb-3">{{u.username}}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </span>
+    </div>
+    <div class="container px-5 py-5 mt-3 bg-white rounded shadow-min" style="min-height:220px">
+        <span id="" class="team-head-font noto-bold d-block mt-2">トップピックス</span>
+            <div class="scroll-x">
+                <div class="d-flex mx-3 py-3" style="">
+                    {% for a in top_articles %}
+                        {% include 'components/showcase.html' %}
+                    {% endfor %}
+                </div>
+            </div>
+    </div>
+    <div class="container px-5 py-5 mt-3 bg-white rounded shadow-min" style="min-height:220px">
+        <span id="ArticleWrapper" class="team-head-font noto-bold d-block mt-2">過去に投稿したアイディア</span>
+            {% for a in teamarticles %}
+                {% if a.is_published %}
+                    {% include 'components/showcase-tree.html' %}
+                {% endif %}
+            {% endfor %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block footer %}
+{% endblock %}
+
+{% block js %}
+{% endblock %}
+

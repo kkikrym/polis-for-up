@@ -1,0 +1,76 @@
+{% load myfilters %}
+{% block nav %}
+    <nav class="navbar navbar-expand fixed-top
+        {% if '/team/' in request.path %}
+            navbar-team
+        {% elif '/community/' in request.path %}
+            navbar-community
+        {% else %}
+            navbar-top
+        {% endif %}">
+        <div class="nav-circle rounded-circle" style="height:20vh; width:24vh; position:fixed; top:-10vh; left:-12vh; z-index:-33;"></div>
+        {% if request.user.is_anonymous %}
+            <a class="navbar-brand" href="{% url 'account_login' %}">
+        {% else %}
+            <a class="navbar-brand" href="{% url 'mypage:index' %}">
+        {% endif %}
+            <img class="me-3 ms-1 mt-1" style="min-width:7vh; min-height:7vh; width:7vh; height:7vh;" src="/static/polis_logo.png" alt="">
+            </a>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarText">
+                        <a class="px-1 rounded-circle
+                            {% if 'mypage' == request.path|url_fst %} link-light bg-dark {% elif 'stock' == request.path|url_fst %} link-dark bg-white {% else %} link-dark link-none {% endif %}"
+                                href="{% if request.user.is_anonymous %} {% url 'top:index' %} {% else %} {% url 'mypage:index' %} {% endif %}" id="PhoneTab">
+                                    <svg class="d-inline" viewBox="0 0 32 36" xmlns="http://www.w3.org/2000/svg" style="height:auto; width:1rem; fill:currentColor;">
+                                        <path d="M0 36V12L16.1 0L32 12V36H20.3V21.75H11.65V36H0ZM3 33H8.65V18.75H23.3V33H29V13.5L16.1 3.75L3 13.5V33Z" />
+                                    </svg>
+                        </a>
+                        <a class="px-1 rounded-circle
+                            {% if 'community' == request.path|url_fst %} link-light bg-dark {% else %} link-dark link-none {% endif %}
+                                "href="{% url 'community:index' %}" id="PhoneTab">
+                                    <svg class="d-inline" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg" style="height:auto; width:1rem; fill:currentColor;">
+                                        <path d="M0 17.2716V1.20901C0 0.940342 0.124583 0.671673 0.37375 0.403004C0.622917 0.134334 0.881667 0 1.15 0H16.0713C16.3588 0 16.6271 0.129537 16.8762 0.388611C17.1254 0.647685 17.25 0.921151 17.25 1.20901V11.4568C17.25 11.7255 17.1254 11.9942 16.8762 12.2628C16.6271 12.5315 16.3588 12.6658 16.0713 12.6658H4.6L0 17.2716ZM5.77875 18.423C5.51042 18.423 5.24687 18.2887 4.98812 18.02C4.72937 17.7514 4.6 17.4827 4.6 17.214V14.393H18.975V4.60576H21.85C22.1183 4.60576 22.3771 4.74009 22.6262 5.00876C22.8754 5.27743 23 5.55569 23 5.84355V23L18.4287 18.423H5.77875ZM15.525 1.72716H1.725V13.0976L3.88125 10.9387H15.525V1.72716Z"/>
+                                    </svg>
+                        </a>
+                        <a class="px-1 rounded-circle
+                            {% if '/detail/' in request.path%} link-dark link-none {% elif 'team' == request.path|url_fst %} link-light bg-dark {% else %} link-dark link-none{% endif %}
+                                "href="{% if user.team_id %} {% url 'team:top' %} {% else %} {% url 'team:index' %} {% endif %}" id="PhoneTab">
+                                    <svg class="d-inline" viewBox="0 0 30 34" xmlns="http://www.w3.org/2000/svg" style="height:auto; width:1rem; fill:currentColor;">
+                                        <path d="M0 34V0H17.15L18.1 4.3H30V22.8H17.2L16.25 18.55H3V34H0ZM19.75 19.8H27V7.3H15.55L14.6 3H3V15.55H18.8L19.75 19.8Z" />
+                                    </svg>
+                        </a>
+                        <div style="border-left: 1px solid; height:2rem;" class="ms-1" id="PhoneTab"></div>
+                        <a class="px-1 rounded-circle
+                            {% if 'search'     == request.path|url_fst %} link-light bg-dark {% elif '/detail/' in request.path %} link-light bg-dark {% else %} link-dark link-none {% endif %}
+                                "href="{% url 'search:users' %}" id="PhoneTab">
+                                <svg class="d-inline" viewBox="0 0 36 37" xmlns="http://www.w3.org/2000/svg" style="height:auto; width:1rem; fill:currentColor;">
+                                    <path d="M33.8 36.95L20.65 23.7999C19.65 24.6666 18.4833 25.3416 17.15 25.825C15.8167 26.3083 14.4 26.5499 12.9 26.5499C9.3 26.5499 6.25 25.2999 3.75 22.7999C1.25 20.2999 0 17.2833 0 13.75C0 10.2166 1.25 7.19995 3.75 4.69995C6.25 2.19995 9.28333 0.949951 12.85 0.949951C16.3833 0.949951 19.3917 2.19995 21.875 4.69995C24.3583 7.19995 25.6 10.2166 25.6 13.75C25.6 15.1833 25.3667 16.5666 24.9 17.9C24.4333 19.2333 23.7333 20.4833 22.8 21.65L36 34.75L33.8 36.95ZM12.85 23.5499C15.55 23.5499 17.85 22.5916 19.75 20.6749C21.65 18.7583 22.6 16.45 22.6 13.75C22.6 11.05 21.65 8.74162 19.75 6.82495C17.85 4.90828 15.55 3.94995 12.85 3.94995C10.1167 3.94995 7.79167 4.90828 5.875 6.82495C3.95833 8.74162 3 11.05 3 13.75C3 16.45 3.95833 18.7583 5.875 20.6749C7.79167 22.5916 10.1167 23.5499 12.85 23.5499Z"/>
+                                </svg>
+                        </a>
+                        <a class="px-1 rounded-circle
+                            {% if 'timeline'  == request.path|url_fst %} link-light bg-dark {% else %} link-dark link-none {% endif %}
+                                " href="{% url 'timeline' %}" id="PhoneTab">
+                                    <svg class="d-inline" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" style="height:auto; width:1rem; fill:currentColor;">
+                                        <path d="M18.15 36C15.65 36 13.3 35.525 11.1 34.575C8.9 33.625 6.975 32.3333 5.325 30.7C3.675 29.0667 2.375 27.15 1.425 24.95C0.475 22.75 0 20.4 0 17.9C0 15.4 0.475 13.0667 1.425 10.9C2.375 8.73333 3.675 6.84167 5.325 5.225C6.975 3.60833 8.9 2.33333 11.1 1.4C13.3 0.466667 15.65 0 18.15 0C20.8167 0 23.3417 0.583333 25.725 1.75C28.1083 2.91667 30.1667 4.51667 31.9 6.55V1.25H34.9V11.65H24.45V8.65H29.7C28.2333 6.95 26.5083 5.58333 24.525 4.55C22.5417 3.51667 20.4167 3 18.15 3C13.9833 3 10.4167 4.425 7.45 7.275C4.48333 10.125 3 13.6167 3 17.75C3 21.9833 4.46667 25.5833 7.4 28.55C10.3333 31.5167 13.9167 33 18.15 33C22.3167 33 25.8333 31.5333 28.7 28.6C31.5667 25.6667 33 22.1167 33 17.95H36C36 22.95 34.2667 27.2083 30.8 30.725C27.3333 34.2417 23.1167 36 18.15 36ZM24.25 26.15L16.55 18.55V7.85H19.55V17.3L26.4 24L24.25 26.15Z" />
+                                    </svg>
+                        </a>
+                        <a href="#" class="ms-3 d-inline" data-bs-toggle="modal" data-bs-target="#NotificationModal"  style="margin-right:10px;">
+                            <img class="d-inline" src="/static/logo/bell.svg" alt="" style="height:auto; width:1rem;">
+                        </a>
+                    <span {% if request.user.teamrecruit_set.all|length != 0 %}id="notification_icon" data-num=""{% endif %}>
+                    </span>
+        </div>
+    </nav>
+        {% if request.user.team_set.first %}
+            {% if "/team/top/" in request.path %}
+                {% include 'lefttab_team.html' %}
+            {% elif "/team/info/" in request.path %}
+                {% include 'lefttab_team.html' %}
+            {% elif '/team/chat/' in request.path %}
+                {% include 'lefttab_team.html' %}
+            {% else %}
+                {% include 'lefttab.html' %}
+            {% endif %}
+        {% else %}
+            {% include 'lefttab.html' %}
+        {% endif %}
+{% endblock %}

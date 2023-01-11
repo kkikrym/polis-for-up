@@ -1,0 +1,666 @@
+.team-card {
+    width: 10vmin;
+}
+
+.fa-def {
+    font-size:6vmin;
+}
+
+.floating-tooltip-2 {
+    width: 96px;
+    height: 300px;
+    position: absolute;
+    display: none;
+    padding: 8px;
+    box-sizing: border-box;
+    font-size: 12px;
+    color: '#20262E';
+    background-color: rgba(255, 255, 255, 0.23);
+    text-align: left;
+    z-index: 1000;
+    top: 12px;
+    left: 12px;
+    pointer-events: none;
+    border-radius: 4px 4px 0px 0px;
+    border-bottom: none;
+    box-shadow: 0 2px 5px 0 rgba(117, 134, 150, 0.45);
+}
+
+#ui-id-1, #ui-id-2, #ui-id-3 {
+    z-index: 1070 !important;
+}
+.icon-def {
+    width: 60px;
+    height: 60px;
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-white-rgb), var(--bs-bg-opacity)) !important;
+    border-radius: 0.25rem !important;
+    /*border: 1px solid #dee2e6 !important;*/
+    background-color:rgba(173, 176, 176, 1);
+    object-fit: cover;
+}
+
+.navbar {
+    box-shadow: 0 3px 3px 0 rgba(0, 0, 0, .3);
+}
+.row{
+    max-width: 100vw !important;
+}
+
+.nav-top {
+    background-color:rgba(25, 67, 100, 1);
+    position: fixed;
+    height:100vh;
+    width: 190px;
+}
+.nav-community {
+    background-color: rgba(12, 100, 100, 1);
+    position: fixed;
+    height:100vh;
+    width: 190px;
+}
+
+.nav-team {
+    font-size: 0.8rem;
+    height: 300px;
+    top:15vh;
+    left:1vmin;
+}
+
+.nav-teamchat {
+    font-size: 14px;
+    position: fixed;
+    height: 100vh;
+    background-color: #3F445C;
+}
+
+.nav-teamchat-font {
+    font-family: 'Noto Sans JP';
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
+    color: #ADB2B9 !important;
+}
+
+.lefttab {
+    width: 190px;
+    display: inline-block;
+}
+
+.lefttab-team {
+    width: 190px;
+    display: inline-block;
+}
+
+.notification-team{
+    color: #3F445C;
+    background-color:white;
+    border-radius: 50%;
+    width:20px;
+}
+
+.content{
+    width: calc(100vw - 190px);
+    position: absolute;
+
+    display: inline-block;
+    padding-top:5vh;
+    min-height: 100vh;
+}
+
+.navbar-top, .navbar-top > div {
+    background-color: rgba(238, 246, 249, 1);
+    height:7vh;
+}
+
+.navbar-team, .navbar-team > div {
+    background-color: #D9DEE3;
+    height:7vh;
+}
+
+.navbar-community, .navbar-community > div {
+    background-color: rgba(236, 248, 239, 1);
+    height:7vh;
+}
+
+
+/* svgs */
+.svg-def {
+    max-height: 100%;
+    width:1.5rem;
+    height:1.5rem;
+    fill: currentColor;
+}
+
+svg.text {
+    height: 1em;
+    vertical-align: text-bottom;
+    fill: currentColor;
+}
+
+.svg-body {
+    width:1rem;
+    height:1rem;
+    fill: currentColor;
+}
+
+.svg-seen {
+    width:1.5rem;
+    height:1.5rem;
+}
+
+.svg-has-good {
+    width:1.5rem;
+    height:1.5rem;
+    fill:red;
+}
+
+.svg-team-article {
+    /*
+    width: 65px;
+    height: 65px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index:2;
+    */
+    width: 1rem;
+    height: 1rem;
+    vertical-align: text-bottom;
+
+}
+
+
+
+.rounded-half {
+    border-radius: 1rem !important;
+}
+
+.noto-bold {
+    font-weight: bold;
+}
+
+.shadow-min{
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .1);
+}
+
+.shadow-bottom{
+    box-shadow: 0 3px 3px 0 rgba(0, 0, 0, .3);
+}
+
+.hover-none, .hover-none:hover {
+    border:none !important;
+    cursor: pointer;
+}
+
+.btn,  .btn:hover, .btn:active, .btn:focus, .btn:focus-visible {
+    background-color: none!important;
+    border: none !important;
+    box-shadow:none!important;
+}
+
+select,  select:hover, select:active, select:focus, select:focus-visible {
+    background-color: none!important;
+    box-shadow:none!important;
+}
+
+.link-none{
+    text-decoration: none;
+}
+
+.hover-opa{
+    border:none !important;
+    display: block !important;
+}
+
+.hover-opa:hover {
+    border:none !important;
+    background-color: rgba(234, 234, 234, .3) !important;
+
+}
+
+.log-box {
+    height:90vh;
+    padding-bottom: 30vh !important;
+    margin-bottom: 5vh !important;
+    line-height: initial;
+}
+
+.chatbox {
+    position:sticky;
+    bottom: 10px;
+    background-color: #F5F5F5;
+}
+
+
+.scroll-x {
+    overflow-x:scroll;
+}
+
+.scroll-x:hover {
+}
+
+.scroll-y {
+    overflow-y:scroll;
+}
+
+.scroll-y:hover {
+}
+
+::-webkit-scrollbar{
+    width: 4px;
+    height: 5px;
+    background-color: rgba(0, 0, 0, .3);
+    color: rgba(0, 0, 0, .3);
+}
+
+ ::-webkit-scrollbar-track{
+    background-color: white;
+ }
+ ::-webkit-scrollbar-thumb{
+    background-color: rgba(0, 0, 0, .3);
+
+ }
+
+@media (max-width: 480px) {
+    .no-scrollbar{
+        /*IE(Internet Explorer)・Microsoft Edgeへの対応*/
+        -ms-overflow-style: none;
+        /*Firefoxへの対応*/
+        scrollbar-width: none;
+    }
+    .scroll-x::-webkit-scrollbar{
+        display: none;
+    }
+    .scroll-y::-webkit-scrollbar{
+        display: none;
+    }
+}
+.overflow-hidden{
+    text-overflow: hidden;
+}
+
+.break-all {
+    word-break: break-all;
+}
+
+/* for community function */
+.color-com{
+    color: rgba(12, 100, 100, 1);
+}
+
+.bg-com{
+    background-color: rgba(12, 100, 100, 1) !important;
+}
+
+/* kits and fonts mainly in team function */
+.fixed-button {
+    position: fixed;
+    right: 2vw;
+    bottom: 30px;
+    z-index: 2;
+}
+
+.request-card {
+    width: 150px !important;
+    font-size: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 3px 3px 0 rgba(0, 0, 0, .3);
+}
+
+.article-thumbnail {
+    object-fit: cover;
+    width: 200px !important;
+    height: 90px !important;
+}
+
+.article-card {
+    width: 220px !important;
+    height: 180px !important;
+    padding:10px;
+    display: flex;
+    box-shadow: 0 3px 3px 0 rgba(0, 0, 0, .3);
+    font-size: 0.8rem;
+}
+
+.article-bottom{
+    margin-top:25px;
+}
+
+.team-head-font {
+    color: #7C7C7C;
+}
+.bg-stock{
+    background-color: rgba(25, 67, 100, 0.25) !important;
+}
+
+.tabfont {
+    color: #ADADAD;
+}
+
+.font-team-grey {
+    color: #64739A;
+}
+
+.bg-team-grey {
+    background-color: #FAFAFA;
+}
+
+input, select, textarea, .bg-input {
+    background-color: #EAEAEA !important;
+}
+
+.tab-unselected {
+    background-color: rgba(234, 234, 234, 1);
+}
+.btn-team-grey{
+    background-color: #64739A !important;
+    font-size: 0.8rem;
+    font-weight: lighter;
+    font-family:"Noto Sans JP";
+}
+
+.btn-team-view{
+    background-color: #64739A !important;
+    color: white !important;
+}
+
+.btn-accept {
+    background-color: #4096D8 !important;
+}
+
+.btn-team{
+    background-color: #64739A !important;
+    color: white !important;
+}
+
+.btn-outline-team, .btn-outline-team:hover {
+    border: 1px solid #3F445C !important;
+}
+
+.font-author {
+    color: rgb(117, 140, 166);
+}
+
+.section::-webkit-scrollbar {
+    width: 1px;
+}
+
+.section::-webkit-scrollbar-track {
+    background-color: #e4e4e4;
+    border-radius: 100px;
+}
+
+.section::-webkit-scrollbar-thumb {
+    background-color: #d4aa70;
+    border-radius: 100px;
+}
+
+.truncate{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.btn-tag {
+    font-size:0.8rem !important;
+    font-weight: 100 !important;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.intbox {
+    width: 2rem;
+}
+
+.font-sm {
+    font-size: 0.9rem !important;
+}
+
+.font-06 {
+    font-size: 0.6rem !important;
+}
+
+.font-07 {
+    font-size: 0.7rem !important;
+}
+
+.font-08 {
+    font-size: 0.8rem !important;
+}
+
+.text-bottom {
+    text-align: baseline !important;
+    vertical-align: baseline !important;
+}
+
+.middle-just {
+    vertical-align: middle;
+}
+
+.border-none {
+    border: none !important;
+}
+
+.btn-follow, .btn-follow:hover {
+    background-color: #194364 !important;
+    color: white !important;
+    white-space: nowrap;
+    border: 1px solid #194364 !important;
+}
+
+.btn-has-follow, .btn-has-follow:hover {
+    background-color: rgba(245, 245, 245, 1) !important;
+    color: #194364 !important;
+    border: 1px solid #194364 !important;
+    white-space: nowrap;
+}
+
+.modal-dialog {
+    margin-top:10vh !important;
+}
+
+.modal-body {
+    margin-bottom: 2rem;
+}
+
+.breakword {
+    overflow-wrap: break-word;
+}
+
+.btn-category {
+    background-color: rgba(25, 67, 100, 1) !important;
+    color: white !important;
+}
+
+.color-top {
+    color: rgba(25, 67, 100, 1);
+    font-family: 'Noto Sans JP';
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
+}
+.query-input {
+    width:fit-content !important;
+    height:fit-content !important;
+    padding-right:4rem;
+}
+
+.btn-ticker {
+    color: #64D8B5 !important;
+    border: 1px solid #64D8B5 !important;
+    border-radius: 0.5rem;
+}
+
+.v-line {
+    border-right: solid 1px grey;
+}
+
+.logo-team{
+    font-weight:400 !important;
+}
+
+.rotate-180 {
+    transform: rotate( 180deg );
+}
+
+.chat-textwrapper{
+    position:fixed;
+    margin-bottom:0;
+    margin-left: 190px;
+}
+
+#chat-message-input {
+    padding-right: 38px;
+    width: calc(99vw - 190px);
+    resize: none;
+}
+
+#chat-message-submit {
+    position: absolute;
+    bottom: 3px;
+    right: 2rem;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    appearance: none;
+}
+
+.chat-title{
+    width: calc(100vw - 190px);
+    margin-left: 190px;
+    margin-top: 7vh;
+    position:fixed;
+}
+.content-width{
+    width: calc(100vw - 190px);
+}
+
+.bottom-just {
+    vertical-align: text-bottom;
+}
+
+.post_today_thumb {
+    object-fit: cover;
+    width: 50vw !important;
+    height:25vw;
+}
+
+.tab-margin{
+    margin-right: 3px;
+}
+
+.wrap-anywhere{
+    overflow-wrap: anywhere;
+}
+
+.scrolltab-phone {
+    white-space:nowrap;
+    flex-wrap:nowrap !important;
+    overflow-x: scroll;
+    overflow-y: clip;
+}
+.scrolltab-phone>*{
+    flex-wrap:nowrap !important;
+}
+
+.height-fit{
+    height: fit-content !important;
+}
+
+.div-pre{
+    display: block;
+    white-space: nowrap;
+}
+
+#notification_icon[data-num="0"]::before {
+    display: none;
+  }
+#notification_icon::before {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      margin-right:18px;
+      margin-top:2vh;
+      content: attr(data-num);
+      min-width: 12px;
+      height: 12px;
+      box-sizing: border-box;
+      padding: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      background-color: #ef5350;
+      border: 1px solid #fff;
+      border-radius: 6px;
+      top: 0;
+      right: 0;
+      transform: translate(40%, -40%);
+      z-index: 1;
+  }
+
+
+/*======== desigins for top page for anonymous users ============*/
+.top-login-button {
+    background-color: #21C9A8 !important;
+    color: white !important;
+    width:100%;
+}
+
+.top-font-team{
+    color: #4263FD;
+}
+.top-font-community{
+    color: #4C8C56;
+}
+.top-font-idea{
+    color: #C37979;
+}
+
+#AboutTitle p{
+    text-align:left !important;
+    font-size: 0.9rem !important;
+}
+
+[id*="AccordionButton"]{
+    cursor: pointer;
+}
+
+#WhatsPolis details[open] {   /* クリックしたら表示される要素 */
+    overflow: auto;
+    animation: ani 1s;  /* アニメーションの指定 */
+  }
+  @keyframes ani {
+    0% {
+      opacity: 0;   /* 最初は見えない状態 */
+      transform: translateY(-20px); /* 20px上にずらしておく */
+    }
+    100% {
+      opacity: 1; /* 1秒後に見えるように */
+      transform: none;  /* 20pxずらしたものを取り除く */
+    }
+}
+.catch {
+    display: flex;
+    align-items: center; /* 垂直中心 */
+    justify-content: center; /* 水平中心 */
+  }
+  .catch:before, .catch:after {
+    border-top: 1px solid;
+    content: "";
+    width: 3em; /* 線の長さ */
+  }
+  .catch:before {
+    margin-right: 1em; /* 文字の右隣 */
+  }
+  .catch:after {
+    margin-left: 1em; /* 文字の左隣 */
+  }
+.top-panel {
+    min-height:86vh;
+}

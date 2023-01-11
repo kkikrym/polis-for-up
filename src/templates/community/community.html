@@ -1,0 +1,245 @@
+{% extends 'base_def.html' %}
+
+{% block head %}
+    {% include 'head_def.html' %}
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+    <title>コミュニティ|{{community.community_name}}</title>
+{% endblock nav %}
+
+{% block content %}
+
+{{ room_id|json_script:"room_id" }}
+
+{% if user.is_anonymous %}
+    {{ "guest"|json_script:"user_id"}}
+{% else %}
+    {{ user.user_id|json_script:"user_id"}}
+{% endif %}
+
+<div class="bg-white" style="margin-top:-5vh">
+    <div class="shadow-bottom p-3 pt-4 position-fixed bg-white content-width" style="z-index:100;">
+        <div class="d-flex"><a class="btn ms-auto text-light bg-com mt-auto py-0 px-2 btn-tag middle-just d-inline" href="#">#{{category}}</a></div>
+        <div class="truncate">
+            <h3 class="noto-bold middle-just d-inline" data-bs-toggle="tooltip" data-bs-placement="top" title="{{community.community_name}}">{{community.community_name}}</h3>
+        </div>
+    </div>
+    <div class="log-box mt-3 px-2 scroll-y" style="padding-top:100px" id="chat-log"><!-- messages are displayed here -->
+        {% for chat in community_chats %}
+            {% if chat.whats_in == "chat" %}
+                <div class="rounded pt-3 font-sm bg-white">
+                    <div class="d-flex mb-1">
+                        <span class="me-3 intbox text-end" id="chatNum"></span>
+                        <a href="{% url 'users:detail' chat.user.pk %}">
+                            <img class="d-inline rounded mt-1" width="42px" height="42px" src="/media/{{chat.user.profile_image}}" alt="">
+                        </a>
+                        <span class="noto-bold ms-3 mt-auto truncate">{{ chat.user.username }}</span>
+                        <span class="ms-3 mt-auto truncate text-muted font-07" id="createdAt">{{ chat.created_at|date:'Y m d H i s' }}</span>
+                    </div>
+                    <p class="ms-5 breakword" id="ChatContent">
+                        {{ chat.content|linebreaksbr }}
+                    </p>
+                    <hr class="mb-0">
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% if not user.is_authenticated %}
+        <div class="content-width chat-textwrapper fixed-bottom">
+            <a class="primaryAction btn rounded-0 top-login-button d-block py-2" href="{% url 'account_login' %}">ログインしてチャットに参加</a>
+        </div>
+    {% else %}
+        <div class="content-width chat-textwrapper fixed-bottom px-2">
+            <textarea class="form-control" id="chat-message-input" type="text"></textarea>
+            <button id="chat-message-submit" type="button" value="Send" size=""><img src="/static/logo/send-com.svg" alt=""></button>
+        </div>
+    {% endif %}
+</div>
+{% if user.is_authenticated %}
+<script>
+
+const roomName = JSON.parse(document.getElementById('room_id').textContent);
+const user_id = JSON.parse(document.getElementById('user_id').textContent);
+
+const chatSocket = new WebSocket(
+    'wss://'
+    + window.location.host
+    + '/ws/community/chat/'
+    + roomName
+    + '/'
+);
+
+//textareaの高さ調整
+let textarea = document.getElementById('chat-message-input');
+//textareaのデフォルトの要素の高さを取得
+let clientHeight = textarea.clientHeight;
+textarea.style.height = 30 + 'px';
+//textareaのinputイベント
+textarea.addEventListener('input', ()=>{
+    //textareaの要素の高さを設定（rows属性で行を指定するなら「px」ではなく「auto」で良いかも！）
+    textarea.style.height = clientHeight + 'px';
+    //textareaの入力内容の高さを取得
+    let scrollHeight = textarea.scrollHeight;
+    //textareaの高さに入力内容の高さを設定
+    textarea.style.height = scrollHeight + 'px';
+});
+
+const now = new Date();
+function formatdate(now){
+    let Year = now.getFullYear();
+    let Month = now.getMonth()+1;
+    let Date = now.getDate();
+    let Hour = now.getHours();
+    let Min = now.getMinutes();
+    let Sec = now.getSeconds();
+    if (Hour < 10) {
+        Hour = "0"+Hour;
+    }
+    if (Min < 10) {
+        Min = "0"+Min;
+    }
+    if (Sec < 10) {
+        Sec = "0"+Sec;
+    }
+    let nstr = Year + "-" + Month + "-" + Date + ' ' + Hour + ":" + Min + ":" + Sec;
+    return nstr;
+}
+let nstr = formatdate(now)
+function AutoLink(str) {
+    var regexp_url = /((h?)(ttps?:\/\/[a-zA-Z0-9.\-_@:/~?%&;=+#',()*!]+))/g; // ']))/;
+    var regexp_makeLink = function(all, url, h, href) {
+        return '<a href="h' + href + '">' + url + '</a>';
+    }
+    return str.replace(regexp_url, regexp_makeLink);
+}
+
+chatSocket.onopen = function(e) {
+    chatSocket.send(JSON.stringify({
+        'whats_in': "join_announce",
+        'user_id': user_id,
+        'message': "",
+        'time':nstr,
+    }));
+    //the height of the chat log
+    let chat_log_scrollHeight = document.getElementById('chat-log').scrollHeight;
+    //scroll to the bottom
+    document.getElementById('chat-log').scrollTop = chat_log_scrollHeight;
+}
+
+chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    let un = data.username;
+    data.message = data.message.replace(/\r?\n/g, '<br>');
+    data.message = AutoLink(data.message);
+    if (data.user_id == "") {
+        un="guest";
+    }
+    if (data.whats_in == "join_announce") {
+        /*document.querySelector('#chat-log').innerHTML += (
+            data.time +
+            '<img class="d-inline rounded" width="25px" height="25px" src="{{ request.scheme }}://{{ request.get_host }}/media/' + data.user_image + '" alt="">' +
+            '<strong class="p-1 alert-warning mx-3"> ' + un + '</strong>' + ' logged online!<br>'
+        );*/
+    } else if (data.whats_in == "chat") {
+        document.querySelector('#chat-log').innerHTML += (
+            '<div class="rounded pt-3 font-sm bg-white">' +
+                '<div class="d-flex mb-1">' +
+                    '<span class="me-2 intbox text-end" id="chatNum"></span>' +
+                    '<a href="/users/detail/' + data.user_id + '">' +
+                    '<img class="d-inline rounded mt-1" width="42px" height="42px" src="/media/' + data.user_image + '" alt=""></a>' +
+                    '<span class="noto-bold ms-3 mt-auto truncate">' + un + '</span>' +
+                    '<span class="ms-3 mt-auto truncate text-muted font-07" id="createdAt">' + data.time +'</span></div>' +
+                    '<p class="ms-5 breakword">' + data.message + '</p>' +
+            '<hr class="mb-0"></div>'
+        );
+    }
+    let chatnum = document.querySelectorAll('#chatNum')
+    for (i in chatnum){
+        a = parseInt(i) + parseInt(1);
+        chatnum[i].textContent = a + '.';
+    }
+};
+
+chatSocket.onclose = function(e) {
+    //console.error('Chat socket closed unexpectedly');
+};
+
+document.querySelector('#chat-message-input').focus();
+document.querySelector('#chat-message-input').onkeyup = function(e) {
+    if (e.keyCode === 13) {  // enter, return
+        //document.querySelector('#chat-message-submit').click();
+    }
+};
+
+document.querySelector('#chat-message-submit').onclick = function(e) {
+    let inp = $("#chat-message-input").val();
+    if (!inp) {
+        alert('メッセージを入力してください！');
+    } else {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'whats_in': 'chat',
+            'user_id': user_id,
+            'message': message,
+            'time':nstr,
+        }));
+        messageInputDom.value = '';
+        document.querySelector('#chat-message-input').focus();
+    };
+    textarea.style.height = 30 + 'px';
+};
+
+//チャット番号表示
+//ページを離れる直前にメッセージを表示する
+window.onload = function(){
+    window.onbeforeunload = function(){
+        console.log('a user exited room');
+        chatSocket.close();
+    }
+    let chatnum = document.querySelectorAll('#chatNum');
+    for (i in chatnum){
+        a = parseInt(i) + parseInt(1);
+        chatnum[i].textContent = a + '.';
+    }
+}
+
+const dates = document.querySelectorAll("#createdAt");
+const timeNow=new Date();
+const yesterday = new Date(timeNow.getFullYear(), timeNow.getMonth(), timeNow.getDate()-1, timeNow.getHours(), timeNow.getMinutes(), timeNow.getSeconds());
+const withinHour = new Date(timeNow.getFullYear(), timeNow.getMonth(), timeNow.getDate(), timeNow.getHours()-1, timeNow.getMinutes(), timeNow.getSeconds());
+for (let i=0; i<dates.length; i++) {
+    let ca = dates[i].innerHTML.split(' ');
+    let created_at = new Date(ca[0], ca[1]-1, ca[2], ca[3], ca[4], ca[5]);
+    if(created_at.getTime() > withinHour.getTime()){ //投稿が一時間以内であれば
+        let diff = timeNow.getMinutes() - created_at.getMinutes();
+        if (diff<0){
+            diff = timeNow.getMinutes() + (60-created_at.getMinutes());
+        }
+        let w = dates[i];
+        w.innerHTML = (
+            diff +'分前</span>'
+        );
+    } else if (created_at.getTime() > yesterday.getTime()){ // 投稿が1日以内であれば
+        let diff = timeNow.getHours() - created_at.getHours();
+        if (diff<0){
+            diff = timeNow.getHours() + (24-created_at.getHours());
+        }
+        let w = dates[i];
+        w.innerHTML = (
+            diff +'時間前</span>'
+        );
+    } else {
+        let diff = Math.round((timeNow.getTime() - created_at.getTime())/ 1000 / 60 / 60 / 24);
+        let w = dates[i];
+        w.innerHTML = (
+            diff +'日前</div>'
+        );
+    }
+}
+</script>
+{% endif %}
+{% endblock content %}
+</html>

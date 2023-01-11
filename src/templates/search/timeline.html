@@ -1,0 +1,66 @@
+{% extends 'base_def.html' %}
+{% load myfilters %}
+
+{% block head %}
+    {% include 'head_def.html' %}
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+{% endblock nav %}
+
+{% block content %}
+    <div class="px-5 py-3" id="nav-tabContent">
+        <!-- Posts,Articles -->
+        <div class="tab-pane fade show active" id="tabA" role="tabpanel" aria-labelledby="tab-1">
+            <span class="text-muted noto-bold my-5">
+                タイムライン
+            </span>
+            {% if not user.is_authenticated %}
+                <div class="m-5 p-5">
+                    <a class="primaryAction btn rounded-0 top-login-button d-block py-2" href="{% url 'account_login' %}">ログインしてポリスのユーザーをフォロー</a>
+                </div>
+            {% endif %}
+            {% for a in a_list %}
+                <div id="Wrapper{{forloop.counter0}}" class="px-3">
+                    <span id="created_at" class="d-none">{{a.created_at|date:"Y n j H i s"}}</span>
+                    <div id="ArticleBox" class="row justify-content-end" id="article-box">
+                        <div class="col-md-12 col-lg-8">
+                            {% if a.author_id %}
+                                <div class="d-flex mt-3 ms-3 pe-5">
+                                    <img class="icon-def" src="/media/{{a.author.profile_image}}" alt="">
+                                    <span class="ms-3 overflow-hidden me-5">
+                                        {% if not a.author.team_set.first %}
+                                            <h6 class="truncate noto-bold mt-3 py-1">{{ a.author.username }}</h6>
+                                        {% elif a.author.team_set %}
+                                            <a class="btn-team-grey link-none rounded px-1 py-0 d-inline-block" href="{% url 'team:detail' a.author.team_set.first.pk %}">
+                                                <span class="text-light truncate">Team {{ a.author.team_set.first.team_name }}</span>
+                                            </a>
+                                            <h6 class="truncate noto-bold mt-1 py-1">{{ a.author.username }}</h6>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            {% else %}
+                                <div class="d-flex ps-4">
+                                    <a class="btn btn-team-view px-3 d-block truncate me-5" href="{% url 'team:detail' a.team.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{a.team.team_name}}">
+                                        <h6 class="rounded mb-0 middle-just logo-team d-inline">
+                                            Team {{ a.team.team_name }}
+                                        </h6>
+                                    </a>
+                                </div>
+                            {% endif %}
+                                <hr class="my-1">
+                        </div>
+                        {% include 'components/showcase.html' %} <!-- col-auto -->
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}
+{% block footer %}
+{% endblock footer %}
+
+{% block js %}
+<script src="/static/assets/js/timelinehistory.js"></script>
+{% endblock  %}

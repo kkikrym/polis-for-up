@@ -1,0 +1,186 @@
+{% extends 'base_def.html' %}
+
+{% block head %}
+    {% include 'head_def.html' %}
+    <title>チームトップ</title>
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+{% endblock nav %}
+
+{% block content %}
+<a class="fixed-button d-flex" href="{% url 'team:article_create' team_id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="チーム記事作成"><img class="ms-auto" src="/static/logo/post-plus.svg" alt="create articles"></a>
+<div class="rounded mb-3 team-content">
+    <div class="mx-3">
+        <div class="d-flex">
+            <a class="btn-team-grey link-none rounded px-2 py-1 mb-1 mt-auto ms-auto text-light" href="{% url 'team:info' team.id %}">チーム情報</a>
+            <span class="mt-auto mb-0 middle-just">
+                <button type="button" class="btn p-1 mb-1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img class="svg-def mb-0" src="/static/logo/menu.svg" alt="">
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right mt-1" id="">
+                    {% if request.user == team.leader %}
+                        <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#TeamChangeModal">チームプロフィール変更</button></li>
+                        <li><button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#LeaderExitModal">チーム脱退</button></li>
+                    {% else %}
+                        <li><a type="button" class="dropdown-item text-danger"  data-bs-toggle="modal" data-bs-target="#UserExitModal">チーム脱退</a></li>
+                    {% endif %}
+                </ul>
+                    {% if request.user == team.leader %}
+                        <!-- Modal -->
+                        <div class="modal fade" id="LeaderExitModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-body text-center">
+                                        <div class="d-flex">
+                                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        {% if team.users.all|length == 1 %}
+                                            <h6 class="m-3">メンバーがいないため、チームを脱退すると入り直すことができません。<br><br>脱退しますか？</h6>
+                                            <a href="{% url 'team:exit_team' team.pk %}" class="btn btn-danger text-light my-3 px-5">脱退</a>
+                                        {% else %}
+                                        <form action="{% url 'team:exit_team' team.pk %}" method="get">
+                                            {% csrf_token %}
+                                            <h6 class="my-3">次期リーダーを決めてください。</h6>
+                                            <select name="pre_leader" class="form-control" id="">
+                                                {% for u in team.users.all %}
+                                                    {% if u != request.user %}
+                                                        <option value="{{u.pk}}">{{u.username}}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                            <div class="my-3">
+                                                <button type="submit" class="btn btn-danger text-light px-5">脱退</button>
+                                            </div>
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <!-- Modal -->
+                        <div class="modal fade" id="UserExitModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-body text-center">
+                                        <div class="d-flex">
+                                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <h6 class="m-3">脱退しますか？</h6>
+                                        <a href="{% url 'team:exit_team' team.pk %}" class="btn btn-danger text-light my-3 px-5">脱退</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <!-- Modal -->
+                    <div class="modal fade" id="TeamChangeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body text-center">
+                                    <div class="d-flex">
+                                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="{% url 'team:change' team.pk %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="mt-3">チーム名：</div>
+                                        {{TeamChangeForm.team_name}}
+                                        <div class="mt-3">詳細：</div>
+                                        <div class="text-muted font-08">※75文字以内</div>
+                                        <textarea name="description" cols="40" rows="8" class="form-control" id="id_description" maxlength="75">{{TeamChangeForm.description.value|default_if_none:""}}</textarea>
+                                        <div class="my-3">
+                                            <button type="submit" class="btn btn-team text-light px-5">変更</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </span>
+        </div>
+        <div class="noto-bold align-baseline div-pre scroll-x pt-3">
+            Team <h3 class="d-inline noto-bold wrap-anywhere">{{team.team_name}}</h3>
+        </div>
+        <hr class="mt-0">
+    </div>
+    <div class="container px-5 mt-3">
+        {% if r_list %}
+            <span class="team-head-font noto-bold d-block my-3 py-2"><span class="font-08">参加申請</span></span>
+                <div class="scroll-x">
+                    <div class="row mx-3 py-3" style="">
+                        {% for r in r_list %}
+                            <div class="col-auto rounded mx-2 py-4 px-3 text-center request-card">
+                                <a href="{% url 'users:detail' r.user.user_id %}">
+                                    <img class="mt-2 icon-def" src="/media/{{ r.user.profile_image }}" alt="">
+                                </a>
+                                <span class="truncate font-sm">{{r.user.username}}</span>
+                                {% if request.user == team.leader %}
+                                    <button type="button" class="btn btn-accept pt-0 mt-1 pb-1 " data-bs-toggle="modal" data-bs-target="#AcceptModal">
+                                        <span class="truncate" style="font-size: 0.7rem; color:white;">参加を承認</span>
+                                    </button>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="AcceptModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-body text-center">
+                                                    <div class="d-flex">
+                                                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <a href="{% url 'users:detail' r.user.user_id %}">
+                                                        <img class="mt-5 icon-def" src="/media/{{ r.user.profile_image }}" alt="">
+                                                    </a>
+                                                    <h5 class="modal-title my-5" id="exampleModalLabel">{{r.user.username}}<br>の参加を承認しますか？</h5>
+                                                    <a class="btn btn-team text-light" href="{% url 'team:request_accept' r.id %}">承認する</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </span>
+        {% endif %}
+        <span class="team-head-font noto-bold d-block my-3"><span class="font-08">注目のアイディア</span></span>
+            <div class="scroll-x">
+                <div class="pb-1 d-flex" style="min-height:200px">
+                    {% for a in rising_posts %}
+                        {% include 'components/showcase.html' %}
+                    {% endfor %}
+                </div>
+            </div>
+        <hr>
+        <span class="team-head-font noto-bold d-block mt-5"><span class="font-08">編集中のアイディア</span></span>
+            <div class="scroll-x">
+                    <div class="ms-3 py-3 d-flex align-items-end" id="wrapper" style="min-height:200px">
+                        {% for a in article_list %}
+                            {% if not a.is_published %}
+                                {% include 'components/showcase.html' %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+            </div>
+        <hr>
+        <span class="team-head-font noto-bold d-block mt-5"><span class="font-08">過去に投稿したアイディア：</span></span>
+            <div class="pb-5">
+                <div class="my-4" style="min-height:200px;">
+                    {% for a in article_list %}
+                        {% if a.is_published %}
+                            {% include 'components/showcase-tree.html' %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+{% block js %}
+<script src="/static/assets/js/notifications_for_team.js"></script>
+{% endblock %}

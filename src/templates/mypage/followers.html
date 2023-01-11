@@ -1,0 +1,53 @@
+{% extends 'base_def.html' %}
+
+{% block head %}
+    {% include 'head_def.html' %}
+    <title>フォロー/フォロワー</title>
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+{% endblock nav %}
+
+{% block content %}
+<div class="mx-2">
+    <a class="nav-link hover-none mx-2 mt-2" href="{% url 'mypage:index' %}">
+        <img src="/static/logo/back.svg" class="" height="15px" width="15px" alt="">
+        <span class="rounded-end nav-teamchat-font ms-1 me-1">戻る</span>
+    </a>
+    <ul class="nav nav-tabs border-none" id="nav-tab" role="tablist">
+        <li class="nav-item bg-input tab-margin">
+            <a class="nav-link active py-1 px-5 rounded-top" id="tab-1" data-bs-toggle="tab" href="#tabA" role="tab" aria-controls="tab-1" aria-selected="true"><span class="team-head-font">フォロー</span></a>
+        </li>
+        <li class="nav-item bg-input tab-margin">
+            <a class="nav-link link-light py-1 px-5 rounded-top" id="tab-2" data-bs-toggle="tab" href="#tabB" role="tab" aria-controls="tab-1" aria-selected="false"><span class="team-head-font">フォロワー</span></a>
+        </li>
+        <li class="nav-item bg-input tab-margin">
+            <a class="nav-link link-light py-1 px-5 rounded-top" id="tab-3" data-bs-toggle="tab" href="#tabC" role="tab" aria-controls="tab-2" aria-selected="false"><span class="team-head-font">チーム</span></a>
+        </li>
+    </ul>
+    <div class="tab-content shadow-min bg-white rounded py-3" id="nav-tabContent">
+        <!-- Follow -->
+        <div class="tab-pane fade show active" id="tabA" role="tabpanel" aria-labelledby="tab-1">
+            {% for u in request.user.following.all %}
+                    {% include 'components/userview.html' %}
+            {% endfor %}
+        </div>
+        <!-- Follower -->
+        <div class="tab-pane" id="tabB" role="tabpanel" aria-labelledby="tab-1">
+            {% for u in request.user.followed_by.all %}
+                    {% include 'components/userview.html' %}
+            {% endfor %}
+        </div>
+        <!-- Team -->
+        <div class="tab-pane" id="tabC" role="tabpanel" aria-labelledby="tab-1">
+            {% for t in following_teams %}
+                {% include 'components/teamview.html' %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block footer %}
+{% endblock footer %}

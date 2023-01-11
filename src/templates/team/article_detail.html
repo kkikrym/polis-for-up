@@ -1,0 +1,21 @@
+{% extends 'base_def.html' %}
+
+{% block head %}
+    {% include 'head_def.html' %}
+    <meta property="og:title" content="{{a.title}}"/>
+    <meta property="og:type" content="article"/>
+    <title>{{a.title}}</title>
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+{% endblock nav %}
+
+{% block content %}
+    {% include 'components/articleview.html' %}
+{% endblock content %}
+
+
+{% block footer %}
+
+{% endblock footer %}

@@ -1,0 +1,70 @@
+{% extends "top/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head %}
+    {% include 'top/head.html' %}
+{% endblock head %}
+
+{% block nav %}
+    {% include 'top/nav.html' %}
+{% endblock nav %}
+
+{% block content %}
+<div class="container p-5 text-center">
+    {% get_providers as socialaccount_providers %}
+
+    {% if socialaccount_providers %}
+        <p>{% blocktrans with site.name as site_name %}Please sign in with one
+        of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
+        for a Polis account and sign in below:{% endblocktrans %}</p>
+        <div class="socialaccount_ballot">
+            <ul class="socialaccount_providers">
+            {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+            </ul>
+            <div class="login-or">{% trans 'or' %}</div>
+        </div>
+        {% include "socialaccount/snippets/login_extra.html" %}
+    {% else %}
+    {% endif %}
+    <div class="container mt-5 pt-5">
+        {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+        {% endif %}
+        <h6 class="my-5">ログイン</h6>
+        <form class="" method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            <div class="my-5">
+                <input type="email" name="login" placeholder="メールアドレス" autocomplete="email" class="form-control rounded-0 bg-white py-2 border" required="" id="id_login">
+            </div>
+            <div class="my-5">
+                <input type="password" name="password" placeholder="パスワード" autocomplete="current-password" class="form-control rounded-0 bg-white py-2 border" required="" id="id_password">
+            </div>
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            <p class="text-muted">ログインをクリックすることで、<a href="/static/Polis-terms-of-service-221018.pdf" target="_blank" rel="noopener noreferrer">利用規約</a>、<a href="/static/Polis-cookie-policy-221018.pdf" target="_blank" rel="noopener noreferrer">Cookieポリシー</a>に同意するものとします。</p>
+            <button class="primaryAction btn rounded-0 top-login-button d-block py-2" type="submit">ログイン</button>
+            <div class="my-3">
+                <a class="link-none font-sm" href="{% url 'account_reset_password' %}">パスワードをお忘れですか？</a>
+            </div>
+            <hr class="my-1">
+            <div class="my-3">
+                <a class="link-none font-sm" href="{% url 'account_signup' %}">アカウント作成</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

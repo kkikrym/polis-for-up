@@ -1,0 +1,267 @@
+{% extends 'base_def.html' %}
+{% load crispy_forms_tags %}
+{% load myfilters %}
+
+{% block head %}
+    {% include 'head_def.html' %}
+    <title>マイページ</title>
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+{% endblock nav %}
+
+{% block content %}
+<a class="fixed-button d-flex" href="{% url 'post:create'  %}">
+    <img class="ms-auto" src="/static/logo/mypage-post-plus.svg" alt="create articles" data-bs-toggle="tooltip" data-bs-placement="top" title="投稿する">
+</a>
+{% if not user.team_id %}
+    <a class="fixed-button d-flex" style="bottom:100px !important" href="#" data-bs-toggle="modal" data-bs-target="#TeamCreateModal" data-bs-toggle="tooltip" data-bs-placement="top" title="チーム作成">
+        <img class="ms-auto" src="/static/logo/flag-plus.svg" alt="create team">
+    </a>
+{% endif %}
+<!-- Team Create Modal -->
+<div class="modal fade" id="TeamCreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-body text-center">
+            <div class="d-flex">
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <h6 class="modal-title text-center noto-bold my-3" id="exampleModalLabel">チームを作成しますか？<br>一度に一つしかチームには入れません。</h5>
+            <form action="{% url 'team:create' %}" method="POST">
+                {% csrf_token %}
+                <p class="my-1">チーム名：{{ TeamCreateForm.team_name }}</p>
+                <button type="submit" class="btn btn-team text-light px-2 my-3">作成する</button>
+            </form>
+        </div>
+        </div>
+    </div>
+</div>
+                            <div class="modal fade" id="UserChangeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" style="margin-top:5% !important;">
+                                    <div class="modal-content">
+                                    <div class="modal-body text-center">
+                                        <div class="d-flex">
+                                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <h6 class="modal-title text-center noto-bold mb-3" id="exampleModalLabel">ユーザー情報変更</h5>
+                                        <form action="{% url 'mypage:change' request.user.pk %}" method="post" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <div class="d-flex mt-3" id="preview">
+                                                <img class="icon-def ms-3" id="profile" src="{{request.user.profile_image.url}}" alt="">
+                                                <div class="ms-5" id="">
+                                                    <div class="ms-1 text-start">プロフィール画像</div>
+                                                    <input type="file" name="profile_image" accept="image/*" class="form-control mt-2 mb-4" id="id_profile_image" onchange="imgPreView(event);">
+                                                </div>
+                                            </div>
+                                            <span class="text-center mt-3">ユーザー名</span>
+                                            {{UserChangeForm.username}}
+                                            <span class="text-center mt-3">メールアドレス</span>
+                                            {{UserChangeForm.email}}
+                                            <span class="text-center mt-3">プロフィール</span>
+                                            <div class="text-muted font-08">※75文字以内</div>
+                                            <textarea name="profile_message" cols="40" rows="10" class="form-control mt-2 mb-4" id="id_profile_message" maxlength="75">{{UserChangeForm.profile_message.value|default_if_none:""}}</textarea>
+                                            <button type="submit" class="btn btn btn-team text-light px-5 py-1 my-3">
+                                                変更
+                                            </button>
+                                        </form>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+
+<div class="">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 col-lg-8 mt-2">
+                <div class="d-flex">
+                    <img class="icon-def d-inline" src="/media/{{ user.profile_image }}" alt="">
+                    <span class="ms-3 overflow-hidden">
+                            <div class="truncate text-light">
+                                {% if user.team_id %}
+                                    {% if user == user.team_set.first.leader %}
+                                        <img class="me-1" src="/static/logo/flag-red.svg" style="vertical-align: baseline;" alt="">
+                                    {% endif %}
+                                    <a class="btn-team-grey link-light link-none rounded px-1 py-1" href="{% url 'team:top' %}">
+                                        Team {{ user.team_set.first.team_name }}
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <h3 class="truncate noto-bold py-1{% if not user.team_id %}mt-3{% endif %}">{{ user.username }}</h3>
+                    </span>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12 col-sm-12 mt-2">
+                <div class="d-flex">
+                    <div class="mt-2 mb-3 me-2" style="background-color:gray; width:1px;"></div>
+                        <a class="link-none text-dark" href="{% url 'mypage:followers' %}">
+                            <p class="text-center mx-2">
+                                <span class="text-muted font-07">フォロー</span><br>
+                                <span class="noto-bold">{{user.following.all|length}}<span class="font-08">人</span></span>
+                            </p>
+                        </a>
+                        <a class="link-none text-dark" href="{% url 'mypage:followers' %}#tabB">
+                            <p class="text-center mx-2">
+                                <span class="text-muted font-07">フォロワー</span><br>
+                                <span class="noto-bold">{{user.followed_by.all|length}}<span class="font-08">人</span></span>
+                            </p>
+                        </a>
+                        <p class="text-center mx-2">
+                            <span class="text-muted font-07">いいね</span><br>
+                            <span class="noto-bold">{{goods}}</span>
+                        </p>
+                    <!-- setting button -->
+                    <button type="button" class="btn ms-auto p-1 mb-1 ms-2" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img class="svg-def mb-0" src="/static/logo/menu.svg" alt="">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right mt-1" id="">
+                        <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#UserChangeModal">プロフィール変更</button></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'account_logout' %}">ログアウト</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="mt-1">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col bg-white shadow-min rounded">
+                <!-- 今日の注目 -->
+                    <span class="team-head-font noto-bold d-block pt-3 ms-3">今日の注目</span>
+                        <div class="px-3" id="wrapper">
+                        {% if post_today %}
+                            {% with post_today as a %}
+                                <div class="overflow-hidden rounded-0 mx-1 d-inline">
+                                            <div class="d-flex">
+                                                <div class="d-inline-block middle-just me-2"><span class="font-author font-07">{{a.created_at|date:"Y/n/j"}}</span></div>
+                                                    {% if a.team %}
+                                                        <div class="truncate middle-just">
+                                                            <svg class="svg-team-article ms-3 mb-1" fill="#758CA6" viewBox="0 0 30 32" xmlns="http://www.w3.org/2000/svg"><path d="M0 34V0H17.15L18.1 4.3H30V22.8H17.2L16.25 18.55H3V34H0ZM19.75 19.8H27V7.3H15.55L14.6 3H3V15.55H18.8L19.75 19.8Z" /></svg>
+                                                            <span class="ms-1 font-author font-sm">Team {{a.team.team_name}}</span>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="truncate middle-just">
+                                                            <span class="ms-1 font-author font-sm">{{a.author.username}}</span>
+                                                        </div>
+                                                    {% endif %}
+                                            </div>
+                                                {% if a.team %}<a class="link-none" href="{% url 'team:article_detail' a.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{a.title}}">
+                                                {% else %}<a class="link-none" href="{% url 'post:detail' a.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{a.title}}">
+                                                {% endif %}
+                                                    <h4 class="my-3 ms-2 text-dark noto-bold break-all truncate">{{a.title}}</h4>
+                                                </a>
+                                    <div class="container-fluid px-0">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-10">
+                                                    {% if a.team %}<a class="link-none" href="{% url 'team:article_detail' a.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{a.title}}">
+                                                    {% else %}<a class="link-none" href="{% url 'post:detail' a.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{a.title}}">
+                                                    {% endif %}
+                                                        {% if not a.thumbnail %}<img class="img-fluid text-center post_today_thumb rounded-0" src="/static/thumb-other.png" alt="">
+                                                        {% else %}<img class="img-fluid text-center post_today_thumb rounded-0" src="/media/{{a.thumbnail}}" alt="">{% endif %}
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-12 col-md-2">
+                                                <div class="row mt-2">
+                                                    <div class="col-auto">
+                                                        <div class="text-muted font-07">いいね</div>
+                                                            {% if a.team %}<div class="noto-bold text-end px-2" style="min-width:4rem;">{{a.tagood_set.all|length}}</div>
+                                                            {% else %}<div class="noto-bold text-end px-2" style="min-width:4rem;">{{a.postgood_set.all|length}}</div>
+                                                            {% endif %}
+                                                        <hr class="my-0">
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <div class="text-muted font-07">閲覧数</div>
+                                                        <div class="noto-bold text-end px-2" style="min-width:4rem;">{{a.seen}}</div>
+                                                        <hr class="my-0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endwith %}
+                        {% endif %}
+                        </div>
+            </div>
+            <div class="col-3 bg-white shadow-min rounded p-2 ms-1" style="height:auto;" id="PcTab">
+                    <span class="team-head-font noto-bold d-block mt-2">おすすめのチーム</span>
+                        <div class="py-2 scroll-y" style="height:55vh">
+                            {% for t in team_recommends %}
+                                    <a class="btn btn-team-view px-2 pt-0 pb-1 d-block truncate logo-team" href="{% url 'team:detail' t.pk %}">
+                                        <span class="text-light font-sm rounded mb-0 middle-just logo-team" data-bs-toggle="tooltip" data-bs-placement="top" title="{{t.team_name}}">Team {{t.team_name}}</span>
+                                    </a>
+                                    <br>
+                                    <div class="ms-3">
+                                        <span class="text-center mx-2 d-inline-block">
+                                            <span class="text-muted font-07">フォロワー</span><br>
+                                            <span class="noto-bold">{{t.followers.all|length}}<span class="font-08">人</span></span>
+                                        </span>
+                                        <span class="text-center mx-2 d-inline-block">
+                                            <span class="text-muted font-07">いいね</span><br>
+                                            <span class="noto-bold">{% access_list recommend_goods forloop.counter0 %}</span>
+                                        </span>
+                                    </div>
+                                    <div class="d-flex  font-07">
+                                        <a href="{% url 'team:detail' t.pk %}" class="link-none text-muted ms-auto">プロフィールへ<img src="/static/logo/arrow-sm-right.svg" alt=""></a>
+                                    </div>
+                                    <hr class="mb-0 mt-1">
+                            {% endfor %}
+                        </div>
+                <div class="d-flex" style="position:relative; bottom:2vh;">
+                    <a href="#" class="link-none text-muted font-08 ms-auto mt-2">
+                        もっと見る<img src="/static/logo/arrow-sm-right.svg" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white shadow-min rounded p-3 my-3 px-5">
+                <span class="team-head-font noto-bold d-block mt-2">注目アイディア</span>
+                    <div class="scroll-x">
+                        <div class="ms-3 py-3 d-flex align-items-end" style="min-height:220px">
+                            {% for a in rising_posts %}
+                                {% include 'components/showcase.html' %}
+                            {% endfor %}
+                        </div>
+                    </div>
+            </div>
+    <div class="bg-white shadow-min rounded p-3 my-3 px-5">
+        <span class="team-head-font noto-bold d-block mt-2">編集中のアイディア</span>
+            <div class="scroll-x">
+                <div class="ms-3 py-3 d-flex align-items-end" style="min-height:200px">
+                    {% for a in post_list %}
+                        {% if not a.is_published %}
+                            {% include 'components/showcase.html' %}
+                        {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="bg-white shadow-min rounded px-3 my-3 px-5 pt-3 pb-5">
+        <span id="ArticleWrapper" class="team-head-font noto-bold d-block mt-2">過去投稿アイディア</span>
+            <div class="my-4" style="min-height:200px">
+                {% for a in post_list %}
+                    {% if a.is_published %}
+                        {% include 'components/showcase-tree.html' %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+    </div>
+</div>
+{% endblock content %}
+{% block footer %}
+{% endblock footer %}
+
+{% block js %}
+    <script>
+        function imgPreView(event) {
+            const reader = new FileReader();
+            reader.onload = (function() {
+                document.getElementById('profile').src = reader.result;
+            });
+            const file = event.target.files[0];
+            reader.readAsDataURL(file);
+        }
+    </script>
+{% endblock  %}

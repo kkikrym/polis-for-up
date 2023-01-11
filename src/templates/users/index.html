@@ -1,0 +1,72 @@
+{% extends 'base_def.html' %}
+
+{% block head %}
+    {% include 'head_def.html' %}
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+{% endblock nav %}
+
+{% block content %}
+                <div class="container">
+                    <h1>ユーザー一覧</h1>
+
+                    {% for u in customuser_list %}
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                {{ u.username }}
+                            </div>
+                            <div class="card-body">
+                                <a class="link-dark" href="{% url 'users:detail' u.user_id %}">詳細を見る</a><br>
+                                {{ u.profile_message }}
+                            </div>
+                        </div>
+
+                        <div class="scroll-x">
+                        <div class="ms-3 py-3 d-flex align-items-end" style="height:300px">
+                            {% for a in u.post_set.all %}
+
+                                    {% if a.is_published %}
+                                        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 col-3 article-card rounded-0 d-inline px-3 pt-3 me-3 position-relative">
+
+                                            <a href="{% url 'post:detail' a.id %}">
+                                                <img class="img-fluid text-center article-thumbnail rounded-0" src="/media/{{a.thumbnail}}" alt="">
+                                            </a>
+                                            <h5 class="mt-3 text-dark noto-bold break-all"><span style="z-index:33;">{{a.title|truncatechars:15}}</span></h5>
+                                            <div class="mt-4 mb-1 d-flex justify-content-between">
+                                                <span class="tabfont">{{a.created_at|date:"Y/n/j"}}</span>
+                                                <span style="z-index:30;">
+                                                <svg class="svg-team-article mx-2" viewBox="0 0 30 34" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M0 34V0H17.15L18.1 4.3H30V22.8H17.2L16.25 18.55H3V34H0ZM19.75 19.8H27V7.3H15.55L14.6 3H3V15.55H18.8L19.75 19.8Z" />
+                                                </svg><span class="ms-1 font-author">{{a.team.team_name|truncatechars_html:15}}</span></span>
+                                            </div>
+                                        </div>
+                                        <!-- Modal -->
+                                    <div class="modal fade" id="DeleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-body text-center">
+                                                    <div class="d-flex">
+                                                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <h6 class="modal-title text-center noto-bold mt-3 mb-3" id="exampleModalLabel">アイディアを削除しますか？</h5>
+                                                    <a href="{% url 'post:delete' a.id %}" class="btn btn-danger text-light px-2">削除</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                </div>
+{% endblock content %}
+
+
+{% block footer %}
+
+{% endblock footer %}

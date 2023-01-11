@@ -1,0 +1,133 @@
+{% extends 'base_def.html' %}
+
+{% block head %}
+    {% include 'head_def.html' %}
+    <title>コミュニティトップ</title>
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+{% endblock nav %}
+
+
+{% block content %}
+    {% if user.is_authenticated %}
+    <a class="fixed-button d-flex" data-bs-toggle="modal" data-bs-target="#CommunityCreateModal" data-bs-toggle="tooltip" data-bs-placement="top" title="コミュニティ作成">
+        <img class="ms-auto" src="/static/logo/community-plus.svg" alt="create community">
+    </a>
+    <!-- Modal -->
+    <div class="modal fade" id="CommunityCreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="d-flex">
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <h6 class="modal-title text-center noto-bold my-3" id="exampleModalLabel">コミュニティ作成</h5>
+                <form action="{% url 'community:create' %}" method="POST">
+                    {% csrf_token %}
+                    <p class="my-1 text-start">コミュニティ名：<br>{{ CommunityCreateForm.community_name }}</p>
+                    <p class="my-1 text-start">詳細：<br>{{ CommunityCreateForm.description }}</p>
+                    <p class="my-1 text-start">カテゴリ：
+                                <select
+                                    type="{{CommunityCreateForm.category.field.widget.input_type}}"
+                                    class="form-select"
+                                    {% if CommunityCreateForm.category.field.required %}required{% endif %}
+                                    name="{{CommunityCreateForm.category.name}}"
+                                    id="{{CommunityCreateForm.category.id_for_label}}">
+                                        {% for item in CommunityCreateForm.category %}
+                                            {{item}}
+                                        {% endfor %}
+                                </select>
+                    </p>
+                    <button type="submit" class="btn btn-team text-light px-2 my-3">作成する</button>
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class='mx-3'>
+        <div class='d-flex justify-content-between'>
+            <h2 class="d-inline noto-bold"><span class="color-com">Community</span> TOP</h2>
+            <a id="PcTab" class="btn text-light bg-com mt-auto"  href="{% url 'community:explore' %}?tab=0">
+                <svg class="svg-body me-1" viewBox="0 0 36 37" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M33.8 36.95L20.65 23.7999C19.65 24.6666 18.4833 25.3416 17.15 25.825C15.8167 26.3083 14.4 26.5499 12.9 26.5499C9.3 26.5499 6.25 25.2999 3.75 22.7999C1.25 20.2999 0 17.2833 0 13.75C0 10.2166 1.25 7.19995 3.75 4.69995C6.25 2.19995 9.28333 0.949951 12.85 0.949951C16.3833 0.949951 19.3917 2.19995 21.875 4.69995C24.3583 7.19995 25.6 10.2166 25.6 13.75C25.6 15.1833 25.3667 16.5666 24.9 17.9C24.4333 19.2333 23.7333 20.4833 22.8 21.65L36 34.75L33.8 36.95ZM12.85 23.5499C15.55 23.5499 17.85 22.5916 19.75 20.6749C21.65 18.7583 22.6 16.45 22.6 13.75C22.6 11.05 21.65 8.74162 19.75 6.82495C17.85 4.90828 15.55 3.94995 12.85 3.94995C10.1167 3.94995 7.79167 4.90828 5.875 6.82495C3.95833 8.74162 3 11.05 3 13.75C3 16.45 3.95833 18.7583 5.875 20.6749C7.79167 22.5916 10.1167 23.5499 12.85 23.5499Z"/>
+                </svg>
+                <span class="font-sm d-inline-block">新しいコミュニティ</span>
+            </a>
+            <a id="PhoneTab" class="btn text-light bg-com mx-1"  href="{% url 'community:explore' %}?tab=0">
+                <svg class="svg-body" viewBox="0 0 36 37" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M33.8 36.95L20.65 23.7999C19.65 24.6666 18.4833 25.3416 17.15 25.825C15.8167 26.3083 14.4 26.5499 12.9 26.5499C9.3 26.5499 6.25 25.2999 3.75 22.7999C1.25 20.2999 0 17.2833 0 13.75C0 10.2166 1.25 7.19995 3.75 4.69995C6.25 2.19995 9.28333 0.949951 12.85 0.949951C16.3833 0.949951 19.3917 2.19995 21.875 4.69995C24.3583 7.19995 25.6 10.2166 25.6 13.75C25.6 15.1833 25.3667 16.5666 24.9 17.9C24.4333 19.2333 23.7333 20.4833 22.8 21.65L36 34.75L33.8 36.95ZM12.85 23.5499C15.55 23.5499 17.85 22.5916 19.75 20.6749C21.65 18.7583 22.6 16.45 22.6 13.75C22.6 11.05 21.65 8.74162 19.75 6.82495C17.85 4.90828 15.55 3.94995 12.85 3.94995C10.1167 3.94995 7.79167 4.90828 5.875 6.82495C3.95833 8.74162 3 11.05 3 13.75C3 16.45 3.95833 18.7583 5.875 20.6749C7.79167 22.5916 10.1167 23.5499 12.85 23.5499Z"/>
+                </svg>
+            </a>
+        </div>
+        <hr class="mt-3">
+
+        <div class="shadow-min bg-white rounded pt-5 pb-4 px-5 my-3">
+            <span class="team-head-font noto-bold d-block mb-3 font-08">参加コミュニティ</span>
+                {% if not user.is_authenticated %}
+                    <div class="my-5">
+                        <a class="primaryAction btn rounded-0 top-login-button d-block py-2" href="{% url 'account_login' %}">ログイン</a>
+                    </div>
+                {% else %}
+                    {% for community in joining_community %}
+                            <div class="row justify-content-between align-items-baseline px-5 mt-2 py-3">
+                                <div class="col-auto">
+                                    <div class="d-flex">
+                                        <a class="nav-link p-0 link-dark" href="#" data-bs-toggle="modal" data-bs-target="#CommunityExitModal{{community.pk}}">
+                                            <img src="/static/logo/community-minus.svg" alt="">
+                                        </a>
+                                        <a class="nav-link p-0 link-dark ms-3 overflow-hidden" href="/community/chat/{{community.id}}">
+                                            <h4 class="noto-bold truncate" data-bs-toggle="tooltip" data-bs-placement="top" title="{{community.community_name}}">{{ community.community_name }}</h4>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="col-auto ms-auto font-07">
+                                    参加<span class="int-box mx-2 font-sm">{{community.users.all|length}}</span>人
+                                </div>
+                            </div>
+                            <hr class="my-1">
+                            <!-- Modal -->
+                            <div class="modal fade" id="CommunityExitModal{{community.pk}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                    <div class="modal-body text-center">
+                                        <div class="d-flex">
+                                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <h6 class="modal-title text-center noto-bold my-3 truncate" id="exampleModalLabel">
+                                            {{community.community_name}}
+                                        </h6>
+                                            を参加コミュニティから削除することができます。 <br>
+                                            削除しますか？
+                                        <br>
+                                        <a class="btn btn-danger mt-3" href="{% url 'community:exit' community.pk %}">削除</a>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                    {% endfor %}
+                    <div class="d-flex">
+                        <a href="{% url 'community:joining' %}" class="link-none text-muted font-08 ms-auto me-3 mt-2">
+                            もっと見る<img src="/static/logo/arrow-sm-right.svg" alt="">
+                        </a>
+                    </div>
+                {% endif %}
+        </div>
+
+            <div class="shadow-min bg-white rounded py-5 px-5 my-3" style="min-height: 220px;">
+                <span class="team-head-font noto-bold d-block font-08 mb-3">活発なコミュニティ</span>
+                {% for community in community_list %}
+                    {% if not community in request.user.community_set.all %}
+                        {% include 'components/communityview.html' %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+    </div>
+
+
+
+{% endblock content %}

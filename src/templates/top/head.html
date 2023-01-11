@@ -1,0 +1,52 @@
+{% load static %}
+{% block head %}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="https://polisjp.com//static/Polis_logo_share.png">
+
+    <title>Polis
+        {% if "mypage" in request.path %}
+            ｜マイページ
+        {% endif %}
+    </title>
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/polis.css?{% now 'Y/m/d H:i:s' %}">
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/polis_phone.css?{% now 'Y/m/d H:i:s' %}">
+
+    <link rel="icon" href="/static/polis_logo.png">
+    <style>
+
+body:before{
+    content:"";
+    display:block;
+    position:fixed;
+    top:0;
+    z-index:-1;
+    width:100vw;
+    height:100vh;
+    background-size:cover;
+    background-position: 60% 50%;
+}
+
+body{
+    font-family: serif;
+    text-align:justify;
+    text-justify: inter-ideograph;
+    width:100vw;
+    line-height: 2;
+    margin: 0;
+    margin-top: 4vh !important;
+    font-size: 0.9rem;
+    /*color: black;*/
+    background-color: #F5F5F5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+}
+
+#PcTab, #PhoneTab{
+    display: none;
+}
+    </style>
+{% endblock %}

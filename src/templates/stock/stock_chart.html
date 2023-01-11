@@ -1,0 +1,120 @@
+{% load myfilters %}
+<!-- Insert
+<div id="chart">
+to display a chart in html
+ -->
+<script class="" src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+<script type="text/javascript">
+function vwchart(vw){
+    document.body.style.position = 'relative';
+    var new_div = document.getElementById('chart');
+    var container = document.createElement('div');
+    container.insertAdjacentHTML('afterbegin', '<h6>{{a.stock.first.json.name}}</h6>');
+    new_div.appendChild(container);
+
+    container.className = 'border rounded mt-1 p-3';
+    var width = vw;
+    var height = window.innerHeight*0.4;
+    var chart = LightweightCharts.createChart(container, {
+    	width: width,
+    	height: height,
+    	leftPriceScale: {
+    		scaleMargins: {
+    			top: 0.2,
+    			bottom: 0.2,
+    		},
+            visible: true,
+    		borderVisible: false,
+    	},
+        rightPriceScale: {
+            visible: false,
+        },
+        timeScale: {
+            borderVisible: false,
+        },
+        grid: {
+            horzLines: {
+                color: '#eee',
+            },
+            vertLines: {
+                color: '#ffffff',
+            },
+        },
+        crosshair: {
+            horzLine: {
+                visible: false,
+                labelVisible: false
+            },
+            vertLine: {
+                visible: true,
+                style: 0,
+                width: 2,
+                color: 'rgba(32, 38, 46, 0.1)',
+                labelVisible: false,
+            }
+        },
+    });
+    var series = chart.addAreaSeries({
+    	topColor: 'rgba(0, 120, 255, 0.2)',
+        bottomColor: 'rgba(0, 120, 255, 0.0)',
+    	lineColor: 'rgba(0, 120, 255, 1)',
+    	lineWidth: 3
+    });
+    series.setData([
+    	{% for item in json.close %}
+    		{ time : '{{item.0}}', value:'{{item.1}}' },
+    	{% endfor %}
+    ]);
+    function businessDayToString(businessDay) {
+    	return new Date(Date.UTC(businessDay.year, businessDay.month - 1, businessDay.day, 0, 0, 0)).toLocaleDateString();
+    }
+    var toolTipWidth = 96;
+    var toolTipHeight = 80;
+    var toolTipMargin = 15;
+    var priceScaleWidth = 50;
+    var toolTip = document.createElement('div');
+    toolTip.className = 'floating-tooltip-2 bg-white';
+    container.appendChild(toolTip);
+    // update tooltip
+    chart.subscribeCrosshairMove(function(param) {
+    	if (!param.time || param.point.x < 0 || param.point.x > width || param.point.y < 0 || param.point.y > height) {
+    		toolTip.style.display = 'none';
+    		return;
+    	}
+    	var dateStr = LightweightCharts.isBusinessDay(param.time)
+    		? businessDayToString(param.time)
+    		: new Date(param.time * 1000).toLocaleDateString();
+    	toolTip.style.display = 'block';
+    	var price = param.seriesPrices.get(series);
+    	toolTip.innerHTML = '<div style="color: rgba(0, 120, 255, 0.9)">⬤ {{json.name}}</div>' +
+    		'<div style="font-size: 24px; margin: 4px 0px; color: #20262E">' + (Math.round(price * 100) / 100).toFixed(2) + '</div>' +
+    		'<div>' + dateStr + '</div>';
+    	var left = param.point.x;
+     	if (left > width - toolTipWidth - toolTipMargin) {
+    		left = width - toolTipWidth;
+    	} else if (left < toolTipWidth / 2) {
+      	left = priceScaleWidth;
+      }
+        document.body.addEventListener("mousemove", function(e){
+          //座標を取得する
+          var mX = e.pageX;  //X座標
+          var mY = e.pageY;  //Y座標
+            toolTip.style.top = mY-150 + 'px';
+        });
+    	toolTip.style.left = left + 'px';
+    });
+};
+
+if (window.innerWidth>576) {
+    vwchart((window.innerWidth-190)*0.8);
+} else{
+    vwchart((window.innerWidth)*0.8);
+}
+
+window.addEventListener('resize', function(){
+let w = document.querySelector("#chart > div").clientWidth;
+document.querySelector("#chart > div").remove();
+vwchart(w-20);
+}
+);
+</script>

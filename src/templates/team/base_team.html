@@ -1,0 +1,21 @@
+{% load static %}
+{% load myfilters %}
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+        {% endblock %}
+    </head>
+        <body class="">
+            {% block nav %}
+            {% endblock nav %}
+            {{request.user.notifications.team.threads|json_script:"n_threads"}}
+            {% block footer %}
+            {% endblock %}
+            <script src="/static/assets/js/jquery-3.6.1.slim.min.js"></script>
+            <script src="/static/assets/js/bootstrap.bundle.js"></script>
+            <script src="/static/assets/autocomplete/jquery-ui.js"></script>
+            {% block js %}
+            {% endblock  %}
+        </body>
+</html>

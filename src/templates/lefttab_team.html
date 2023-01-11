@@ -1,0 +1,109 @@
+<div id="PcTab">
+    {% if '/article/' in request.path %}
+        <div class="p-1">
+    {% else %}
+    <div class="nav-tabs lefttab-team pe-0 hover-none">
+        <nav class="nav nav-teamchat flex-column pt-5 d-flex lefttab-team">
+            {% if not thread_list %}
+                <a type="button" class="nav-link link-none hover-none mt-5 mb-2 mx-3 p-1 d-flex nav-teamchat-font" data-bs-toggle="modal" data-bs-target="#ThreadAddModalPC">チャットを作成<img src="/static/logo/plus.svg" class="svg-def mt-auto ms-2" alt=""></a>
+            {% endif %}
+            {% for thread in thread_list %}
+                {% if forloop.counter == 1 %}
+                    {% if "team/top" in request.path %}<a class="nav-link link-none hover-none mt-5 mb-2 mx-3 p-1 d-flex nav-teamchat-font" href="{% url 'team:team' thread.id %}">チャットに移動<img src="/static/logo/arrow-sm-right.svg" class="svg-def ms-1" alt=""></a>
+                    {% else %}<a class="nav-link link-none hover-none mt-5 mb-2 mx-3 p-1 d-flex nav-teamchat-font" href="{% url 'team:top' %}"><img src="/static/logo/arrow-sm-right.svg" class="svg-def rotate-180 me-1" alt="">チームトップへ</a>
+                    {% endif %}
+                    <div class="mb-5 pb-4">
+                    <details open><summary class="nav-teamchat-font ms-4 mt-3"><span>会話</span></summary>
+                    <hr class="mx-3 my-0 text-light">
+                {% endif %}
+                    <a class="link-none nav-teamchat-font mx-3 px-3 py-1 mt-2 rounded-half{% if thread.id|safe in request.path %} bg-white d-block{% else %} hover-opa {% endif %}" href="{% url 'team:team' thread.id %}" style="display: grid !important;">
+                        <span class="truncate {% if thread.id|safe in request.path %} link-dark {% else %} nav-teamchat-font {% endif %}">{{thread.thread_name}}</span>
+                        <span class="text-center position-absolute" style="right:20px"{% if not thread.id|safe in request.path %} id="n_{{thread.id}}" {% endif %}>
+                    </a>
+            {% endfor %}
+            <a type="button" class="nav-link d-inline rounded ms-3 hover-none mb-3" data-bs-toggle="modal" data-bs-target="#ThreadAddModalPC">
+                <img src="/static/logo/plus.svg" class="me-2" alt=""><span class="nav-teamchat-font">追加</span>
+            </a>
+            </details>
+        <!--details open>
+            <summary class="ms-4 mt-3 nav-teamchat-font">メッセージ</summary>
+            <hr class="mx-3 my-0 text-light">
+        </details-->
+        </div></nav>
+        {% endif %}
+    </div>
+</div>
+            <!-- Modal -->
+            {% if not '/detail/' in request.path %}
+                <div class="modal fade" id="ThreadAddModalPC" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-body text-center">
+                                <div class="d-flex">
+                                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <h6 class="modal-title text-center noto-bold mb-3" id="exampleModalLabel">チームスレッド作成</h5>
+                                <form action="{% url 'team:thread_create' team_id %}" method="POST">
+                                    {% csrf_token %}
+                                    {{ thread_create_form.thread_name }}
+                                    <button type="submit" class="btn btn-team text-light mt-3 py-2 px-4">作成する</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+<div id="PhoneTab">
+    <a class="team-chatnav-btn d-inline-block" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+        <img src="/static/logo/arrow-sm-right.svg" class="my-auto" alt="">
+    </a>
+        <div class="nav-tabs lefttab-team pe-0 hover-none offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+            <nav class="nav nav-teamchat flex-column pt-5 d-flex lefttab-team"  style="background: #3F445C;">
+                {% if not thread_list %}
+                    <a type="button" class="nav-link link-none hover-none mt-5 mb-2 mx-3 p-1 d-flex nav-teamchat-font" data-bs-toggle="modal" data-bs-target="#ThreadAddModalPhone">チャットを作成<img src="/static/logo/plus.svg" class="svg-def mt-auto ms-2" alt=""></a>
+                {% endif %}
+                {% for thread in thread_list %}
+                    {% if forloop.counter == 1 %}
+                        {% if "team/top" in request.path %}<a class="nav-link link-none hover-none mt-5 mb-2 mx-3 p-1 d-flex nav-teamchat-font" href="{% url 'team:team' thread.id %}">チャットに移動<img src="/static/logo/arrow-sm-right.svg" class="svg-def ms-1" alt=""></a>
+                        {% else %}<a class="nav-link link-none hover-none mt-5 mb-2 mx-3 p-1 d-flex nav-teamchat-font" href="{% url 'team:top' %}"><img src="/static/logo/arrow-sm-right.svg" class="svg-def rotate-180 me-1" alt="">チームトップへ</a>
+                        {% endif %}
+                        <div class="mb-5 pb-4">
+                        <details open><summary class="nav-teamchat-font ms-4 mt-3"><span>会話</span></summary>
+                        <hr class="mx-3 my-0 text-light">
+                    {% endif %}
+                        <a class="link-none nav-teamchat-font mx-3 px-3 py-1 mt-2 rounded-half{% if thread.id|safe in request.path %} bg-white d-block {% else %} hover-opa {% endif %}" href="{% url 'team:team' thread.id %}" style="display: grid !important;">
+                            <span class="truncate {% if thread.id|safe in request.path %} link-dark {% else %} nav-teamchat-font {% endif %}">{{thread.thread_name}}</span>
+                            <span class="text-center position-absolute" style="right:20px"{% if not thread.id|safe in request.path %}id="n_{{thread.id}}"{% endif %}>
+                        </a>
+                {% endfor %}
+                <a type="button" class="nav-link d-inline rounded ms-3 hover-none mb-3" data-bs-toggle="modal" data-bs-target="#ThreadAddModalPhone">
+                    <img src="/static/logo/plus.svg" class="me-2" alt=""><span class="nav-teamchat-font">追加</span>
+                </a>
+                <!-- Modal -->
+            {% if not '/detail/' in request.path %}
+                <div class="modal fade" id="ThreadAddModalPhone" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-body text-center">
+                                <div class="d-flex">
+                                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <h6 class="modal-title text-center noto-bold mb-3" id="exampleModalLabel">チームスレッド作成</h5>
+                                <form action="{% url 'team:thread_create' team_id %}" method="POST">
+                                    {% csrf_token %}
+                                    {{ thread_create_form.thread_name }}
+                                    <button type="submit" class="btn btn-team text-light mt-3 py-2 px-4">作成する</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+                </details>
+            <!--details open>
+                <summary class="ms-4 mt-3 nav-teamchat-font">メッセージ</summary>
+                <hr class="mx-3 my-0 text-light">
+            </details-->
+            </div></nav>
+        </div>
+</div>

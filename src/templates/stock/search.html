@@ -1,0 +1,48 @@
+{% extends 'base_def.html' %}
+{% load i18n %}
+
+
+{% block head %}
+    {% include 'head_def.html' %}
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+{% endblock nav %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                株価チャートを検索
+            </div>
+            <div class="card-body">
+                {% if request.GET.from == 'postcreate' %}
+                    <form action="{% url 'stock:search' %}?from=postcreate" method="post" id='chart' enctype="multipart/form-data">
+                {% else %}
+                    <form action="{% url 'stock:search' %}" method="post" id='chart' enctype="multipart/form-data">
+                {% endif %}
+                    {% csrf_token %}
+                        <div class="form-group">
+                            <label for="stock_id">Stock:</label><br>
+                            <input type="text" name="stock_id" id="">
+                        </div>
+                    <button type="submit" class="btn btn-outline-dark">Search</button>
+                </form>
+                {{er}}
+                <!-- pass the stock info as a dictionary named data_list to the js script -->
+                {% include 'stock_chart.html' %}
+            </div>
+        </div>
+        {% if request.GET.from == 'postcreate' %}
+            選択中の株：{{ stock_id }}
+        {% else %}
+        {% endif %}
+    </div>
+{% endblock content %}
+
+
+{% block footer %}
+
+{% endblock footer %}

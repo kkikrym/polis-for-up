@@ -1,0 +1,99 @@
+@media (max-width:576px){
+    [class^="px"], [class*=" px"]{
+        padding-right: 0.5rem !important;
+        padding-left: 0.5rem !important;
+    }
+    [class^="mx"], [class*=" mx"]{
+        margin-right: 0.5rem !important;
+        margin-left: 0.5rem !important;
+    }
+    [class^="p-"], [class*=" p-"]{
+        padding-right: 0.5rem !important;
+        padding-left: 0.5rem !important;
+    }
+    [class^="m-"], [class*=" m-"]{
+        margin-right: 0.5rem !important;
+        margin-left: 0.5rem !important;
+    }
+    [class^="ps-"], [class*=" ps-"]{
+        padding-left: 0.5rem !important;
+    }
+    [class^="pe-"], [class*=" pe-"]{
+        padding-right: 0.5rem !important;
+    }
+    [class^="ms-"], [class*=" ms-"]{
+        margin-right: 0.5rem !important;
+    }
+    [class^="me-"], [class*=" me-"]{
+        margin-left: 0.5rem !important;
+    }
+    .content{
+        width:100vw;
+    }
+    .article-card {
+        width: 80vw !important;
+        height: auto !important;
+        display: flex;
+        box-shadow: 0 3px 3px 0 rgba(0, 0, 0, .3);
+        font-size: 0.8rem;
+        padding:2vw;
+    }
+    .article-thumbnail {
+        object-fit: cover;
+        width: 76vw !important;
+        height: 35vw !important;
+    }
+    .post_today_thumb {
+        object-fit: cover;
+        width: 85vw !important;
+        height: 40vw !important;
+        max-height: none!important;
+    }
+    #ArticleBody img{
+        width: 100% !important;
+        height:auto !important;
+    }
+    .article-bottom{
+        margin-top:40px !important;
+    }
+    .team-content{
+        margin-left: 4vw;
+    }
+    .content-width{
+        width:100vw;
+    }
+    .btn-follow, .btn-follow:hover {
+        font-size: 0.7rem !important;
+    }
+
+    .btn-has-follow, .btn-has-follow:hover {
+        font-size: 0.7rem !important;
+    }
+    .content-width{
+        width:100vw;
+    }
+    .chat-textwrapper{
+        width:calc(99vw);
+        margin-left: 0px;
+    }
+    #chat-message-input {
+        width:calc(93vw);
+        margin-bottom: 7px;
+    }
+    #chat-message-submit {
+        margin-bottom: 7px;
+    }
+}
+
+.team-chatnav-btn{
+    height: 80vh;
+    width: 4vw;
+    margin-top: 10vh;
+    background: #3F445C;
+    position: fixed;
+    z-index: 1000;
+}
+
+#txt-search {
+    padding-left: 3rem !important;
+}

@@ -1,0 +1,9 @@
+__pycache__
+*/__pycache__/
+*/migrations/
+media/images
+media/files
+.env
+*/settings.py
+*.pkl
+no_json_tickers.json

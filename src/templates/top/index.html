@@ -1,0 +1,150 @@
+{% extends 'top/base.html' %}
+
+{% block head %}
+    {% include 'top/head.html' %}
+<style>
+p{
+  margin: 20px 0;
+}
+/*========= 1文字ずつ出現させるためのCSS ===============*/
+.eachTextAnime span{ white-space:pre-wrap; word-wrap:break-word; line-height: 2; letter-spacing: 3px;}
+.opaZero {opacity: 0;}
+.eachTextAnime span{opacity: 0;}
+.eachTextAnime.appeartext span{ animation:text_anime_on 1s ease-out forwards; }
+@keyframes text_anime_on {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+</style>
+
+{% endblock head %}
+
+{% block nav %}
+    {% include 'top/nav.html' %}
+{% endblock nav %}
+
+{% block content %}
+<div class="container-fluid mt-md-5 pt-md-4 pt-sm-0">
+    <div class="row bg-white shadow-min m-3 top-panel" style="background-color: rgba(249, 251, 252, 1);">
+        <div class="col">
+            <div class="container pt-md-5 pt-sm-0 px-5 text-center">
+                <img class="px-5" style="margin-top:15vh; max-width:80%; height:auto;" src="/static/logo/images-for-top/polis-top-logo.png">
+                <p class="eachTextAnime opaZero font-sm mt-5">　チームだから生まれる、
+卓越したアイディア</p>
+<script src="/static/assets/js/jquery-3.6.1.slim.min.js"></script>
+<script>
+function EachTextAnimeControl() {
+  $('.eachTextAnime').each(function () {
+    var elemPos = $(this).offset().top - 50;
+    var scroll = $(window).scrollTop();
+    var windowHeight = $(window).height();
+    if (scroll >= elemPos - windowHeight) {
+      $(this).addClass("appeartext");
+    } else {
+      $(this).removeClass("appeartext");
+    }
+  });
+}
+$(window).on('load', function () {
+  //spanタグを追加する
+  var element = $(".eachTextAnime");
+  element.removeClass("opaZero");
+  element.each(function () {
+    var text = $(this).text();
+    var textbox = "";
+    text.split('').forEach(function (t, i) {
+      if (t !== " ") {
+        if (i < 10) {
+          textbox += '<span style="animation-delay:.' + i + 's;">' + t + '</span>';
+        } else {
+          var n = i / 10;
+          textbox += '<span style="animation-delay:' + n + 's;">' + t + '</span>';
+        }
+      } else {
+        textbox += t;
+      }
+    });
+    $(this).html(textbox);
+  });
+
+  EachTextAnimeControl();
+});
+</script>
+
+            </div>
+        </div>
+        <div class="col-md-5 col-sm-12 pe-5">
+            <div class="container text-center mb-3" style="margin-top:10vh;">
+                <p>ログイン</p>
+                <form class="" method="POST" action="{% url 'account_login' %}">
+                    {% csrf_token %}
+                    <div class="my-3">
+                        <input type="email" name="login" placeholder="メールアドレス" autocomplete="email" class="form-control rounded-0 bg-white py-2 border" required="" id="id_login">
+                    </div>
+                    <div class="my-3">
+                        <input type="password" name="password" placeholder="パスワード" autocomplete="current-password" class="form-control rounded-0 bg-white py-2 border" required="" id="id_password">
+                    </div>
+                    {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+                    <p class="text-muted">ログインをクリックすることで、<a href="/static/Polis-terms-of-service-221018.pdf" target="_blank" rel="noopener noreferrer">利用規約</a>、<a href="/static/Polis-cookie-policy-221018.pdf" target="_blank" rel="noopener noreferrer">Cookieポリシー</a>に同意するものとします。</p>
+                    <button class="primaryAction btn rounded-0 top-login-button d-block py-2" type="submit">ログイン</button>
+                </form>
+                <div class="my-1">
+                    <a class="link-none font-sm" href="{% url 'account_reset_password' %}">パスワードをお忘れですか？</a>
+                </div>
+                <hr class="my-1">
+                <div class="my-1">
+                    <a class="link-none font-sm" href="{% url 'account_signup' %}">アカウント作成</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid bg-white p-5 top-panel" id="WhatsPolis">
+    <div class="container text-center font-sm p-5">
+        <h3 class="text-muted my-3 py-3">Polisとは</h3>
+        <div>「機関投資家だけがチームを組む」そんな現状に対して何か解決策を提示したい、個人投資家にもチームを組める機会を提供したい。</div>
+        <br>
+        <div>そんな想いでPolisの開発に着手しました。</div>
+        <br>
+        <div>私たちは、現在の機関投資家が大きな存在感を放つ時代から、個人投資家が次の主役として躍り出る時代の訪れを確信しています。</div>
+        <br>
+        <div>来る新しい時代の中で、Polisはユーザーに対して自身の力を最大限に引き出すことのできるプラットフォームを提供し、個人投資家が主役を担う時代の発展をサポートします。</div>
+    </div>
+    <div class="d-flex justify-content-center" style="height:60vh">
+        <h3 class="text-muted d-inline align-self-center">Polisでは何ができるのか</h3>
+    </div>
+    {% include 'top/top-team.html' %}
+    {% include 'top/top-community.html' %}
+    {% include 'top/top-idea.html' %}
+</div>
+{% endblock content %}
+{% block footer %}{% endblock footer %}
+
+
+{% block js %}
+<script>
+    const btnTeams = document.querySelectorAll('#teamAccordionButton');
+    for (let i = 0; i < btnTeams.length; i++) {
+      let element = btnTeams[i];
+      element.addEventListener('click', function () {
+        document.querySelector('#teamAccordionSummary').click();
+      });
+    }
+    const btnCommunitys = document.querySelectorAll('#communityAccordionButton');
+    for (let i = 0; i < btnCommunitys.length; i++) {
+      let element = btnCommunitys[i];
+      element.addEventListener('click', function () {
+        document.querySelector('#communityAccordionSummary').click();
+      });
+    }
+    const btnIdeas = document.querySelectorAll('#ideaAccordionButton');
+    for (let i = 0; i < btnIdeas.length; i++) {
+      let element = btnIdeas[i];
+      element.addEventListener('click', function () {
+        document.querySelector('#ideaAccordionSummary').click();
+      });
+    }
+</script>
+{% endblock %}

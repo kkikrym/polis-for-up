@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head %}
+    {% include 'top/head.html' %}
+{% endblock head %}
+
+{% block nav %}
+    {% include 'nav_def.html' %}
+{% endblock nav %}
+
+
+{% block head_title %}
+  メールアドレスを確認してください
+{% endblock %}
+
+{% block content %}
+<div class="container p-5 mt-5">
+  <div class="text-center mt-5 p-5">
+    <p>
+      <b><u>確認用のメールを送信しました！</b></u>
+    </p>
+    <p>
+      メールの有効性が確認できるまでユーザー登録は完了となりません。
+      メールに記載されたリンクをクリックして、ユーザー登録を完了させてください。
+    </p>
+  </div>
+  <div class="my-3">
+    <a href="/" >トップへ</a>
+  </div>
+  <hr class="my-1">
+  <div class="my-3">
+    <a href="{% url 'account_login' %}">メールか届かない(再送する)</a>
+  </div>
+</div>
+{% endblock %}
